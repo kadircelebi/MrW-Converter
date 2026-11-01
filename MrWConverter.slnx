@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/MrWConverter.App/MrWConverter.App.csproj" />
+    <Project Path="src/MrWConverter.Core/MrWConverter.Core.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/MrWConverter.Core.Tests/MrWConverter.Core.Tests.csproj" />
+  </Folder>
+</Solution>

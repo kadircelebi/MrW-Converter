@@ -1,0 +1,31 @@
+{
+  "aliases": {
+    "jpeg": "jpg",
+    "tif": "tiff",
+    "aif": "aiff",
+    "m4v": "mp4"
+  },
+  "groups": [
+    {
+      "name": "image",
+      "inputs": [ "jpg", "png", "webp", "tiff", "bmp", "avif" ],
+      "outputs": [ "jpg", "png", "webp", "tiff", "bmp", "avif" ],
+      "tools": [ "removeBackground", "crop", "censor" ]
+    },
+    {
+      "name": "audio",
+      "inputs": [ "mp3", "m4a", "wav", "flac", "ogg", "opus", "aiff", "wma" ],
+      "outputs": [ "mp3", "m4a", "wav", "flac", "ogg", "opus" ]
+    },
+    {
+      "name": "video",
+      "inputs": [ "mp4", "mov", "mkv", "webm", "avi", "wmv" ],
+      "outputs": [ "mp4", "mov", "mkv", "webm", "gif", "mp3", "m4a" ]
+    },
+    {
+      "name": "animation",
+      "inputs": [ "gif" ],
+      "outputs": [ "mp4", "mov", "mkv", "webm" ]
+    }
+  ]
+}

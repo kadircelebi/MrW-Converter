@@ -1,0 +1,16 @@
+namespace MrWConverter.Core.Tests;
+
+internal sealed class TemporaryFolder : IDisposable
+{
+    public string Path { get; } = System.IO.Path.Combine(System.IO.Path.GetTempPath(), $"mrwconverter-tests-{Guid.NewGuid():N}");
+
+    public TemporaryFolder() => Directory.CreateDirectory(Path);
+
+    public string File(string name) => System.IO.Path.Combine(Path, name);
+
+    /// <summary>Everything in the folder, including hidden items such as staging folders.</summary>
+    public string[] Entries() =>
+        Directory.GetFileSystemEntries(Path).Select(entry => System.IO.Path.GetFileName(entry)!).Order().ToArray();
+
+    public void Dispose() => Directory.Delete(Path, recursive: true);
+}

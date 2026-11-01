@@ -1,0 +1,40 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\MrWConverter.Core\MrWConverter.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <!-- Keep the Windows version in step with MinVersion in packaging\AppxManifest.xml. -->
+    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
+    <SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
+    <RuntimeIdentifiers>win-x64;win-arm64</RuntimeIdentifiers>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <AssemblyName>MrWConverter</AssemblyName>
+    <RootNamespace>MrWConverter.App</RootNamespace>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets\AppIcon.ico</ApplicationIcon>
+    <SatelliteResourceLanguages>en;tr</SatelliteResourceLanguages>
+    <!-- WPF marks Application.ThemeMode as experimental; it is how WPF follows the Windows theme. -->
+    <NoWarn>$(NoWarn);WPF0001</NoWarn>
+    <FfmpegRuntime>$(RuntimeIdentifier)</FfmpegRuntime>
+    <FfmpegRuntime Condition="'$(FfmpegRuntime)' == ''">win-x64</FfmpegRuntime>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Put there by scripts\setup-ffmpeg.ps1; the binaries are not in the repository. -->
+    <Content Include="..\..\third_party\ffmpeg\$(FfmpegRuntime)\**" Link="ffmpeg\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <!-- Put there by scripts\setup-models.ps1; the file is not in the repository. -->
+    <Content Include="..\..\third_party\models\*.onnx" Link="models\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="THIRD-PARTY-NOTICES.txt" CopyToOutputDirectory="PreserveNewest" />
+    <Resource Include="Assets\Logo.png" />
+  </ItemGroup>
+
+</Project>

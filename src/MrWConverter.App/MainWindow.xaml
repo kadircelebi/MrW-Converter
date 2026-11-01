@@ -1,0 +1,404 @@
+﻿<Window x:Class="MrWConverter.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:res="clr-namespace:MrWConverter.App.Resources"
+        xmlns:vm="clr-namespace:MrWConverter.App.ViewModels"
+        Title="MrWConverter"
+        Width="1000" Height="680" MinWidth="420" MinHeight="420"
+        WindowStartupLocation="CenterScreen"
+        AllowDrop="True"
+        DragEnter="Window_DragOver"
+        DragOver="Window_DragOver"
+        DragLeave="Window_DragLeave"
+        Drop="Window_Drop"
+        Closing="Window_Closing"
+        SizeChanged="Window_SizeChanged">
+
+    <Window.CommandBindings>
+        <CommandBinding Command="Open" Executed="Open_Executed" />
+        <CommandBinding Command="Paste" Executed="Paste_Executed" CanExecute="Paste_CanExecute" />
+        <CommandBinding Command="Properties" Executed="OpenWheel_Executed" />
+    </Window.CommandBindings>
+
+    <Window.InputBindings>
+        <KeyBinding Command="Properties" Key="Space" Modifiers="Control" />
+    </Window.InputBindings>
+
+    <Grid>
+        <!-- The page fills the window, and scrolls when the window or scaled text makes it too small. -->
+        <ScrollViewer x:Name="PageScroller" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <Border x:Name="Page"
+                    Padding="24,8,24,12"
+                    MinHeight="440"
+                    Height="{Binding ViewportHeight, ElementName=PageScroller, Mode=OneWay}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <!-- First screen: nothing chosen yet. -->
+                <Grid Grid.Row="0" Visibility="{Binding IsEmpty, Converter={StaticResource BooleanToVisibility}}">
+                    <Rectangle RadiusX="16" RadiusY="16"
+                               StrokeThickness="1.5"
+                               StrokeDashArray="5 4"
+                               Stroke="{DynamicResource TextFillColorTertiaryBrush}"
+                               Fill="{DynamicResource CardBackgroundFillColorDefaultBrush}" />
+
+                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="24">
+                        <Image Width="88" Height="88"
+                               Source="/Assets/Logo.png"
+                               RenderOptions.BitmapScalingMode="HighQuality" />
+
+                        <TextBlock Margin="0,24,0,6"
+                                   HorizontalAlignment="Center"
+                                   TextAlignment="Center"
+                                   TextWrapping="Wrap"
+                                   FontSize="28"
+                                   FontWeight="SemiBold"
+                                   Text="{x:Static res:Strings.DropHint}" />
+
+                        <TextBlock Style="{StaticResource SecondaryText}"
+                                   HorizontalAlignment="Center"
+                                   TextAlignment="Center"
+                                   TextWrapping="Wrap"
+                                   FontSize="15"
+                                   Text="{x:Static res:Strings.Intro}" />
+
+                        <Button x:Name="ChooseFilesButton"
+                                Margin="0,24,0,28"
+                                Padding="28,10"
+                                FontSize="15"
+                                HorizontalAlignment="Center"
+                                Command="Open"
+                                Style="{DynamicResource AccentButtonStyle}">
+                            <AccessText Text="{x:Static res:Strings.ChooseFiles}" />
+                        </Button>
+
+                        <WrapPanel HorizontalAlignment="Center">
+                            <StackPanel Width="190" Margin="8">
+                                <TextBlock Style="{StaticResource Icon}" Text="&#xEB9F;" FontSize="20" Margin="0,0,0,6" />
+                                <TextBlock Style="{StaticResource SectionTitle}" HorizontalAlignment="Center" Text="{x:Static res:Strings.KindImage}" />
+                                <TextBlock Style="{StaticResource SecondaryText}" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" FontSize="12" Text="JPG, PNG, WebP, TIFF, BMP, AVIF" />
+                            </StackPanel>
+                            <StackPanel Width="190" Margin="8">
+                                <TextBlock Style="{StaticResource Icon}" Text="&#xEC4F;" FontSize="20" Margin="0,0,0,6" />
+                                <TextBlock Style="{StaticResource SectionTitle}" HorizontalAlignment="Center" Text="{x:Static res:Strings.KindAudio}" />
+                                <TextBlock Style="{StaticResource SecondaryText}" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" FontSize="12" Text="MP3, M4A, WAV, FLAC, OGG, Opus" />
+                            </StackPanel>
+                            <StackPanel Width="190" Margin="8">
+                                <TextBlock Style="{StaticResource Icon}" Text="&#xE714;" FontSize="20" Margin="0,0,0,6" />
+                                <TextBlock Style="{StaticResource SectionTitle}" HorizontalAlignment="Center" Text="{x:Static res:Strings.KindVideo}" />
+                                <TextBlock Style="{StaticResource SecondaryText}" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" FontSize="12" Text="MP4, MOV, MKV, WebM, GIF" />
+                            </StackPanel>
+                        </WrapPanel>
+                    </StackPanel>
+                </Grid>
+
+                <!-- Working screen: files on one side, choices on the other. Window_SizeChanged stacks them when narrow. -->
+                <Grid x:Name="Workspace" Grid.Row="0" Visibility="{Binding HasFiles, Converter={StaticResource BooleanToVisibility}}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition x:Name="FilesColumn" Width="*" />
+                        <ColumnDefinition x:Name="OptionsColumn" Width="360" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition x:Name="FilesRow" Height="*" />
+                        <RowDefinition x:Name="OptionsRow" Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <DockPanel x:Name="FilesPane" IsEnabled="{Binding IsIdle}" Margin="0,0,20,0">
+                        <DockPanel DockPanel.Dock="Top" Margin="0,0,0,12" LastChildFill="False">
+                            <TextBlock DockPanel.Dock="Left"
+                                       VerticalAlignment="Center"
+                                       FontSize="22"
+                                       FontWeight="SemiBold"
+                                       Text="{Binding FileCount}" />
+                            <Button DockPanel.Dock="Right" Command="Open">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Style="{StaticResource Icon}" Text="&#xE710;" FontSize="12" Margin="0,0,8,0" />
+                                    <AccessText Text="{x:Static res:Strings.AddFiles}" />
+                                </StackPanel>
+                            </Button>
+                            <Button DockPanel.Dock="Right"
+                                    Style="{StaticResource SubtleButton}"
+                                    Margin="0,0,8,0"
+                                    Content="{x:Static res:Strings.ClearFiles}"
+                                    Command="{Binding ClearFilesCommand}" />
+                        </DockPanel>
+
+                        <ListBox x:Name="FileList"
+                                 ItemsSource="{Binding Files}"
+                                 ItemContainerStyle="{StaticResource FileCard}"
+                                 SelectionMode="Extended"
+                                 Background="Transparent"
+                                 BorderThickness="0"
+                                 Padding="0"
+                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                 KeyDown="FileList_KeyDown"
+                                 AutomationProperties.Name="{x:Static res:Strings.SelectedFiles}">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate DataType="{x:Type vm:FileEntry}">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <Grid Width="56" Height="56" Margin="0,0,14,0">
+                                            <Border CornerRadius="8" Background="{DynamicResource ControlFillColorSecondaryBrush}">
+                                                <TextBlock Style="{StaticResource Icon}" Text="{Binding Glyph}" FontSize="22" />
+                                            </Border>
+                                            <Rectangle RadiusX="8" RadiusY="8">
+                                                <Rectangle.Fill>
+                                                    <ImageBrush ImageSource="{Binding Thumbnail}" Stretch="UniformToFill" />
+                                                </Rectangle.Fill>
+                                            </Rectangle>
+                                        </Grid>
+
+                                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding Name}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                                            <TextBlock Style="{StaticResource SecondaryText}" Text="{Binding Details}" FontSize="12" Margin="0,3,0,0" />
+                                        </StackPanel>
+
+                                        <Button Grid.Column="2"
+                                                Style="{StaticResource SubtleButton}"
+                                                Width="36" Height="36"
+                                                Padding="0"
+                                                VerticalAlignment="Center"
+                                                ToolTip="{x:Static res:Strings.RemoveFile}"
+                                                AutomationProperties.Name="{x:Static res:Strings.RemoveFile}"
+                                                Command="{Binding DataContext.RemoveFileCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                                                CommandParameter="{Binding}">
+                                            <TextBlock Style="{StaticResource Icon}" Text="&#xE711;" FontSize="12" />
+                                        </Button>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </DockPanel>
+
+                    <Border x:Name="OptionsPane" Grid.Column="1" Style="{StaticResource Card}" Padding="20">
+                        <DockPanel>
+                            <!-- The action stays at the bottom of the card; choices fill the space above it. -->
+                            <StackPanel DockPanel.Dock="Bottom">
+                                <Border Padding="12,10"
+                                        Margin="0,0,0,12"
+                                        CornerRadius="8"
+                                        BorderThickness="1">
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Setter Property="Background" Value="{DynamicResource ControlFillColorSecondaryBrush}" />
+                                            <Setter Property="BorderBrush" Value="{DynamicResource CardStrokeColorDefaultBrush}" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Banner}" Value="{x:Static vm:BannerKind.None}">
+                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Banner}" Value="{x:Static vm:BannerKind.Success}">
+                                                    <Setter Property="Background" Value="{DynamicResource SystemFillColorSuccessBackgroundBrush}" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Banner}" Value="{x:Static vm:BannerKind.Error}">
+                                                    <Setter Property="Background" Value="{DynamicResource SystemFillColorCriticalBackgroundBrush}" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                    <StackPanel>
+                                        <DockPanel>
+                                            <TextBlock DockPanel.Dock="Left" FontSize="14" Margin="0,1,10,0" VerticalAlignment="Top">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock" BasedOn="{StaticResource Icon}">
+                                                        <Setter Property="Text" Value="&#xE946;" />
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Banner}" Value="{x:Static vm:BannerKind.Success}">
+                                                                <Setter Property="Text" Value="&#xE73E;" />
+                                                                <Setter Property="Foreground" Value="{DynamicResource SystemFillColorSuccessBrush}" />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Banner}" Value="{x:Static vm:BannerKind.Error}">
+                                                                <Setter Property="Text" Value="&#xE783;" />
+                                                                <Setter Property="Foreground" Value="{DynamicResource SystemFillColorCriticalBrush}" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                            <TextBlock x:Name="StatusText"
+                                                       TextWrapping="Wrap"
+                                                       Text="{Binding Status}"
+                                                       AutomationProperties.LiveSetting="Polite" />
+                                        </DockPanel>
+                                        <Button HorizontalAlignment="Left" Margin="24,8,0,0" Command="{Binding OpenOutputFolderCommand}">
+                                            <Button.Style>
+                                                <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Banner}" Value="{x:Static vm:BannerKind.Success}">
+                                                            <Setter Property="Visibility" Value="Visible" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Button.Style>
+                                            <AccessText Text="{x:Static res:Strings.OpenFolder}" />
+                                        </Button>
+                                    </StackPanel>
+                                </Border>
+
+                                <ProgressBar Height="4"
+                                             Margin="0,0,0,12"
+                                             Minimum="0" Maximum="1"
+                                             Value="{Binding Progress}"
+                                             IsIndeterminate="{Binding IsProgressUnknown}"
+                                             Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibility}}"
+                                             AutomationProperties.Name="{x:Static res:Strings.ConversionProgress}" />
+
+                                <Grid>
+                                    <Button x:Name="ConvertButton"
+                                            Padding="12,11"
+                                            FontSize="15"
+                                            HorizontalAlignment="Stretch"
+                                            IsDefault="True"
+                                            Content="{Binding ConvertLabel}"
+                                            AutomationProperties.Name="{Binding ConvertLabel}"
+                                            Command="{Binding ConvertCommand}"
+                                            Style="{DynamicResource AccentButtonStyle}"
+                                            Visibility="{Binding IsIdle, Converter={StaticResource BooleanToVisibility}}" />
+                                    <Button x:Name="CancelButton"
+                                            Padding="12,11"
+                                            FontSize="15"
+                                            HorizontalAlignment="Stretch"
+                                            IsCancel="True"
+                                            Content="{x:Static res:Strings.Cancel}"
+                                            Command="{Binding CancelJobCommand}"
+                                            Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibility}}" />
+                                </Grid>
+                            </StackPanel>
+
+                            <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,0,0,12">
+                                <StackPanel IsEnabled="{Binding IsIdle}">
+                                    <DockPanel Margin="0,0,0,10">
+                                        <Button x:Name="OpenWheelButton"
+                                                DockPanel.Dock="Right"
+                                                Style="{StaticResource SubtleButton}"
+                                                Padding="6"
+                                                ToolTip="{x:Static res:Strings.OpenWheel}"
+                                                AutomationProperties.Name="{x:Static res:Strings.OpenWheel}"
+                                                Click="OpenWheel_Click">
+                                            <TextBlock Style="{StaticResource Icon}" Text="&#xEA3A;" FontSize="14" />
+                                        </Button>
+                                        <Label Padding="0"
+                                               VerticalAlignment="Center"
+                                               FontWeight="SemiBold"
+                                               FontSize="14"
+                                               Content="{x:Static res:Strings.TargetFormat}"
+                                               Target="{Binding ElementName=TargetList}" />
+                                    </DockPanel>
+
+                                    <ListBox x:Name="TargetList"
+                                             ItemsSource="{Binding Targets}"
+                                             SelectedItem="{Binding SelectedTarget}"
+                                             DisplayMemberPath="Label"
+                                             ItemContainerStyle="{StaticResource FormatPill}"
+                                             Background="Transparent"
+                                             BorderThickness="0"
+                                             Padding="0"
+                                             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                             AutomationProperties.Name="{x:Static res:Strings.TargetFormatName}">
+                                        <ListBox.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <WrapPanel />
+                                            </ItemsPanelTemplate>
+                                        </ListBox.ItemsPanel>
+                                    </ListBox>
+
+                                    <StackPanel Visibility="{Binding HasTools, Converter={StaticResource BooleanToVisibility}}">
+                                        <Rectangle Height="1" Margin="0,12,0,16" Fill="{DynamicResource DividerStrokeColorDefaultBrush}" />
+                                        <TextBlock Style="{StaticResource SectionTitle}" Margin="0,0,0,8" Text="{x:Static res:Strings.ToolsTitle}" />
+                                        <ItemsControl x:Name="ToolList" ItemsSource="{Binding Tools}" Focusable="False">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate DataType="{x:Type vm:ToolOption}">
+                                                    <Button HorizontalAlignment="Stretch"
+                                                            HorizontalContentAlignment="Left"
+                                                            Margin="0,0,0,6"
+                                                            AutomationProperties.Name="{Binding Label}"
+                                                            Command="{Binding DataContext.RunToolCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                            CommandParameter="{Binding}">
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBlock Style="{StaticResource Icon}" Text="{Binding Glyph}" Margin="0,0,10,0" />
+                                                            <TextBlock Text="{Binding Label}" />
+                                                        </StackPanel>
+                                                    </Button>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
+
+                                    <Rectangle Height="1" Margin="0,12,0,16" Fill="{DynamicResource DividerStrokeColorDefaultBrush}" />
+
+                                    <TextBlock Style="{StaticResource SectionTitle}" Margin="0,0,0,8" Text="{x:Static res:Strings.SaveTo}" />
+                                    <DockPanel Margin="0,0,0,10">
+                                        <TextBlock Style="{StaticResource Icon}" DockPanel.Dock="Left" Text="&#xE8B7;" Margin="0,0,10,0" />
+                                        <TextBlock Style="{StaticResource SecondaryText}"
+                                                   VerticalAlignment="Center"
+                                                   TextTrimming="CharacterEllipsis"
+                                                   Text="{Binding OutputDirectory}"
+                                                   ToolTip="{Binding OutputDirectory}" />
+                                    </DockPanel>
+                                    <Button HorizontalAlignment="Left"
+                                            Content="{x:Static res:Strings.ChangeFolder}"
+                                            Click="ChangeFolder_Click" />
+                                </StackPanel>
+                            </ScrollViewer>
+                        </DockPanel>
+                    </Border>
+                </Grid>
+
+                <DockPanel Grid.Row="1" Margin="2,10,0,0" LastChildFill="False">
+                    <TextBlock Style="{StaticResource Icon}"
+                               DockPanel.Dock="Left"
+                               Text="&#xE72E;"
+                               FontSize="12"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                               Margin="0,0,8,0" />
+                    <TextBlock Style="{StaticResource SecondaryText}"
+                               DockPanel.Dock="Left"
+                               VerticalAlignment="Center"
+                               FontSize="12"
+                               Text="{x:Static res:Strings.PrivacyNote}" />
+                    <Button DockPanel.Dock="Right"
+                            Style="{StaticResource SubtleButton}"
+                            FontSize="12"
+                            Content="{x:Static res:Strings.About}"
+                            Click="About_Click" />
+                    <CheckBox x:Name="DragWheelToggle"
+                              DockPanel.Dock="Right"
+                              Margin="0,0,16,0"
+                              VerticalAlignment="Center"
+                              FontSize="12"
+                              Content="{x:Static res:Strings.DragWheel}"
+                              ToolTip="{x:Static res:Strings.DragWheelHelp}"
+                              AutomationProperties.HelpText="{x:Static res:Strings.DragWheelHelp}"
+                              IsChecked="{Binding DragWheelEnabled}" />
+                </DockPanel>
+            </Grid>
+            </Border>
+        </ScrollViewer>
+
+        <!-- Shows the whole window is a drop target while a drag is over it. -->
+        <Border x:Name="DropOverlay"
+                Visibility="Collapsed"
+                IsHitTestVisible="False"
+                Margin="8"
+                CornerRadius="16"
+                BorderThickness="2"
+                BorderBrush="{DynamicResource AccentFillColorDefaultBrush}"
+                Background="{DynamicResource SolidBackgroundFillColorBaseBrush}">
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                <TextBlock Style="{StaticResource Icon}"
+                           Text="&#xE896;"
+                           FontSize="48"
+                           Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" />
+                <TextBlock Margin="0,16,0,0" FontSize="22" FontWeight="SemiBold" Text="{x:Static res:Strings.DropNow}" />
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

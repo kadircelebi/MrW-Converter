@@ -1,0 +1,71 @@
+<Window x:Class="MrWConverter.App.Editor.CropWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:res="clr-namespace:MrWConverter.App.Resources"
+        Title="{x:Static res:Strings.CropTitle}"
+        Width="900" Height="720" MinWidth="520" MinHeight="420"
+        WindowStartupLocation="CenterOwner"
+        ShowInTaskbar="False"
+        Background="{DynamicResource SolidBackgroundFillColorBaseBrush}">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <ListBox x:Name="RatioList"
+                 Grid.Row="0"
+                 Margin="0,0,0,8"
+                 Background="Transparent"
+                 BorderThickness="0"
+                 Padding="0"
+                 ItemContainerStyle="{StaticResource FormatPill}"
+                 SelectionMode="Single"
+                 SelectionChanged="RatioList_SelectionChanged"
+                 AutomationProperties.Name="{x:Static res:Strings.CropArea}">
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel />
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+        </ListBox>
+
+        <Border x:Name="SurfaceHost"
+                Grid.Row="1"
+                Style="{StaticResource Card}"
+                Padding="12"
+                ClipToBounds="True" />
+
+        <Grid Grid.Row="2" Margin="0,16,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel VerticalAlignment="Center">
+                <TextBlock x:Name="SizeText" FontWeight="SemiBold" />
+                <TextBlock Style="{StaticResource SecondaryText}"
+                           FontSize="12"
+                           TextWrapping="Wrap"
+                           Margin="0,2,16,0"
+                           Text="{x:Static res:Strings.CropHelp}" />
+            </StackPanel>
+
+            <Button Grid.Column="1"
+                    Margin="0,0,8,0"
+                    Padding="16,7"
+                    IsCancel="True"
+                    Content="{x:Static res:Strings.Cancel}" />
+
+            <Button x:Name="SaveButton"
+                    Grid.Column="2"
+                    Padding="16,7"
+                    IsDefault="True"
+                    Style="{DynamicResource AccentButtonStyle}"
+                    Content="{x:Static res:Strings.CropSave}"
+                    Click="Save_Click" />
+        </Grid>
+    </Grid>
+</Window>

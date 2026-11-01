@@ -1,0 +1,39 @@
+<Window x:Class="MrWConverter.App.AboutWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:res="clr-namespace:MrWConverter.App.Resources"
+        Title="{x:Static res:Strings.AboutTitle}"
+        Width="560" Height="520" MinWidth="360" MinHeight="320"
+        WindowStartupLocation="CenterOwner"
+        ShowInTaskbar="False">
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TextBlock x:Name="VersionText" Grid.Row="0" Margin="0,0,0,8" />
+
+        <TextBlock Grid.Row="1"
+                   Margin="0,0,0,16"
+                   TextWrapping="Wrap"
+                   Text="{x:Static res:Strings.AboutFfmpegNotice}" />
+
+        <TextBox x:Name="NoticesText"
+                 Grid.Row="2"
+                 IsReadOnly="True"
+                 TextWrapping="Wrap"
+                 AcceptsReturn="True"
+                 VerticalScrollBarVisibility="Auto"
+                 AutomationProperties.Name="{x:Static res:Strings.AboutTitle}" />
+
+        <Button Grid.Row="3"
+                Margin="0,16,0,0"
+                HorizontalAlignment="Right"
+                Content="{x:Static res:Strings.Close}"
+                IsCancel="True"
+                IsDefault="True" />
+    </Grid>
+</Window>
