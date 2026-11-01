@@ -9,8 +9,20 @@
     {
       "name": "image",
       "inputs": [ "jpg", "png", "webp", "tiff", "bmp", "avif" ],
-      "outputs": [ "jpg", "png", "webp", "tiff", "bmp", "avif" ],
-      "tools": [ "removeBackground", "crop", "censor" ]
+      "outputs": [ "jpg", "png", "webp", "tiff", "bmp", "avif", "pdf" ],
+      "tools": [ "removeBackground", "crop", "censor", "mergePdf" ]
+    },
+    {
+      "name": "document",
+      "inputs": [ "pdf" ],
+      "outputs": [ "docx", "png", "jpg", "txt" ],
+      "tools": [ "mergePdf", "splitPdf" ]
+    },
+    {
+      "name": "office",
+      "inputs": [ "doc", "docx", "odt", "rtf", "txt", "xls", "xlsx", "ods", "csv", "ppt", "pptx", "odp" ],
+      "outputs": [ "pdf" ],
+      "tools": [ "mergePdf" ]
     },
     {
       "name": "audio",

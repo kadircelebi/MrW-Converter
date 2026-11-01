@@ -4,7 +4,7 @@
   <resheader name="version"><value>2.0</value></resheader>
   <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
   <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
-  <data name="Intro"><value>Convert images, audio and video to other formats.</value></data>
+  <data name="Intro"><value>Convert images, audio, video, PDFs and Office documents to other formats.</value></data>
   <data name="DropHint"><value>Drop your files here</value></data>
   <data name="DropNow"><value>Drop to add</value></data>
   <data name="PrivacyNote"><value>Your files stay on this device.</value></data>
@@ -100,6 +100,26 @@
   <data name="EditSave"><value>Save</value></data>
   <data name="EditHelp"><value>Space plays. Arrows move a second, with Shift a frame. S splits, Delete removes, I and O cut the start and end, Ctrl+Z undoes. The original file does not change.</value></data>
   <data name="EditNoPlayback"><value>Windows can't play this format. You still see frames, and saving works.</value></data>
+  <data name="ToolMergePdf"><value>Make one PDF</value></data>
+  <data name="ToolSplitPdf"><value>Split into pages</value></data>
+  <data name="PdfMergeUp"><value>Up</value></data>
+  <data name="PdfMergeDown"><value>Down</value></data>
+  <data name="PdfMergeSort"><value>Sort by name</value></data>
+  <data name="PdfMergeOrder"><value>Order of the files</value></data>
+  <data name="PdfMergePageSize"><value>Page size for pictures</value></data>
+  <data name="PdfMergeSizePicture"><value>Same as the picture</value></data>
+  <data name="PdfMergeHelp"><value>Alt with the arrow keys also moves a file. PDFs keep their own pages. The original files do not change.</value></data>
+  <data name="PdfMergeSave"><value>Create PDF</value></data>
+  <data name="StatusPdfPassword"><value>{0} is password protected, and the app cannot open locked PDFs yet. No files were created.</value></data>
+  <data name="StatusPdfNoText"><value>{0} has no text to save, so it is probably a scan. Save its pages as pictures instead. No files were created.</value></data>
+  <data name="OfficeDownloadTitle" xml:space="preserve"><value>Download LibreOffice?</value></data>
+  <data name="OfficeDownloadQuestion" xml:space="preserve"><value>Converting Word, Excel and PowerPoint files to PDF needs LibreOffice, a free office suite.
+
+A 376 MB file will be downloaded from The Document Foundation, the makers of LibreOffice, and takes about 1.5 GB once unpacked. It goes in this app's own folder, only this app uses it, and it is removed when you uninstall the app. Your documents are not sent anywhere.
+
+Download it now?</value></data>
+  <data name="StatusOfficeDownloading" xml:space="preserve"><value>Downloading LibreOffice. This happens only once.</value></data>
+  <data name="StatusOfficeDownloadFailed" xml:space="preserve"><value>LibreOffice could not be downloaded. Check your internet connection and disk space, then try again. No files were created.</value></data>
   <data name="CropTitle"><value>Crop</value></data>
   <data name="CropArea"><value>Crop area</value></data>
   <data name="CropHelp"><value>Drag the corners. On the keyboard, the arrow keys move the area and Shift with them resizes it.</value></data>

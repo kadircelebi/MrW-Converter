@@ -48,6 +48,19 @@ ImageMagick and the image libraries included with Magick.NET
 Each under its own license, listed in the Magick.NET package notices.
 https://imagemagick.org
 
+PDFsharp
+Copyright (c) 2001-2025 empira Software GmbH, Troisdorf (Cologne Area), Germany. MIT License.
+https://github.com/empira/PDFsharp
+
+PdfPig
+Copyright UglyToad and contributors. Apache License 2.0.
+https://github.com/UglyToad/PdfPig
+
+LibreOffice
+Not included in this app. If you agree when asked, version 26.8.2 is downloaded unchanged from The Document Foundation.
+Mozilla Public License 2.0, with the third-party licenses listed in its own license folder.
+https://www.libreoffice.org/about-us/source-code/
+
 CommunityToolkit.Mvvm
 Copyright .NET Foundation and Contributors. MIT License.
 https://github.com/CommunityToolkit/dotnet

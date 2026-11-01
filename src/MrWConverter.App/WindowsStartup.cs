@@ -25,6 +25,13 @@ public static class WindowsStartup
         }
     }
 
+    /// <summary>
+    /// A folder that other programs the app starts can reach too, and that Windows removes with the app.
+    /// In a package, what the app writes under its ordinary AppData is redirected and only it can see it.
+    /// </summary>
+    public static string SharedDataFolder(string unpackagedFolder) =>
+        IsPackaged ? Windows.Storage.ApplicationData.Current.LocalCacheFolder.Path : unpackagedFolder;
+
     public static bool LaunchedAtSignIn =>
         IsPackaged && AppInstance.GetActivatedEventArgs()?.Kind == ActivationKind.StartupTask;
 

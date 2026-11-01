@@ -1,5 +1,6 @@
-using MrWConverter.Core.Formats;
+﻿using MrWConverter.Core.Formats;
 using MrWConverter.Core.Output;
+using MrWConverter.Core.Pdf;
 using MrWConverter.Core.Tools;
 
 namespace MrWConverter.Core.Conversion;
@@ -17,15 +18,29 @@ public sealed class ConversionRunner(
         IProgress<double>? progress = null,
         CancellationToken cancellationToken = default)
     {
-        return RunCoreAsync(inputPaths, outputDirectory, progress, inputPath =>
+        return RunCoreAsync(inputPaths, outputDirectory, progress, async inputPath =>
         {
             var sourceFormat = catalog.FormatOf(inputPath);
             var converter = converters.FirstOrDefault(candidate => candidate.CanConvert(sourceFormat, targetFormat))
                 ?? throw new NotSupportedException($"No converter handles {sourceFormat} to {targetFormat}.");
+            var stem = Path.GetFileNameWithoutExtension(inputPath);
 
-            return new Step(
-                $"{Path.GetFileNameWithoutExtension(inputPath)}.{targetFormat}",
-                (output, fileProgress) => converter.ConvertAsync(inputPath, output, sourceFormat, targetFormat, fileProgress, cancellationToken));
+            if (converter is IPagedConverter paged && paged.HasPages(sourceFormat, targetFormat))
+            {
+                var pages = await paged.CountPagesAsync(inputPath, cancellationToken);
+                return Enumerable.Range(0, pages)
+                    .Select(page => new Step(
+                        pages == 1 ? $"{stem}.{targetFormat}" : $"{stem}-{PdfTools.PageName(page, pages)}.{targetFormat}",
+                        (output, _) => paged.ConvertPageAsync(inputPath, output, page, targetFormat, cancellationToken)))
+                    .ToArray();
+            }
+
+            return
+            [
+                new Step(
+                    $"{stem}.{targetFormat}",
+                    (output, fileProgress) => converter.ConvertAsync(inputPath, output, sourceFormat, targetFormat, fileProgress, cancellationToken)),
+            ];
         }, cancellationToken);
     }
 
@@ -50,9 +65,12 @@ public sealed class ConversionRunner(
         IProgress<double>? progress = null,
         CancellationToken cancellationToken = default)
     {
-        return RunCoreAsync(inputPaths, outputDirectory, progress, inputPath => new Step(
-            tool.OutputName(Path.GetFileNameWithoutExtension(inputPath)),
-            (output, fileProgress) => tool.RunAsync(inputPath, output, catalog.FormatOf(inputPath), fileProgress, cancellationToken)),
+        return RunCoreAsync(inputPaths, outputDirectory, progress, inputPath => Task.FromResult<IReadOnlyList<Step>>(
+            [
+                new Step(
+                    tool.OutputName(Path.GetFileNameWithoutExtension(inputPath)),
+                    (output, fileProgress) => tool.RunAsync(inputPath, output, catalog.FormatOf(inputPath), fileProgress, cancellationToken)),
+            ]),
             cancellationToken);
     }
 
@@ -64,21 +82,19 @@ public sealed class ConversionRunner(
         IProgress<double>? progress = null,
         CancellationToken cancellationToken = default)
     {
-        var next = 0;
-        return RunCoreAsync(Enumerable.Repeat(inputPath, tools.Count).ToArray(), outputDirectory, progress, path =>
-        {
-            var tool = tools[next++];
-            return new Step(
+        return RunCoreAsync([inputPath], outputDirectory, progress, path => Task.FromResult<IReadOnlyList<Step>>(tools
+            .Select(tool => new Step(
                 tool.OutputName(Path.GetFileNameWithoutExtension(path)),
-                (output, fileProgress) => tool.RunAsync(path, output, catalog.FormatOf(path), fileProgress, cancellationToken));
-        }, cancellationToken);
+                (output, fileProgress) => tool.RunAsync(path, output, catalog.FormatOf(path), fileProgress, cancellationToken)))
+            .ToArray()),
+            cancellationToken);
     }
 
     private static async Task<IReadOnlyList<string>> RunCoreAsync(
         IReadOnlyList<string> inputPaths,
         string outputDirectory,
         IProgress<double>? progress,
-        Func<string, Step> stepFor,
+        Func<string, Task<IReadOnlyList<Step>>> stepsFor,
         CancellationToken cancellationToken)
     {
         using var batch = new OutputBatch(outputDirectory);
@@ -88,20 +104,27 @@ public sealed class ConversionRunner(
             cancellationToken.ThrowIfCancellationRequested();
 
             var inputPath = inputPaths[index];
-            var step = stepFor(inputPath);
-            var stagedPath = batch.Stage(step.OutputName);
-            var fileProgress = progress is null ? null : new FileProgress(progress, index, inputPaths.Count);
 
             try
             {
-                await step.Run(stagedPath, fileProgress);
+                var steps = await stepsFor(inputPath);
+
+                for (var part = 0; part < steps.Count; part++)
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+
+                    var share = 1d / inputPaths.Count / steps.Count;
+                    var start = (index + (double)part / steps.Count) / inputPaths.Count;
+                    var stagedPath = batch.Stage(steps[part].OutputName);
+
+                    await steps[part].Run(stagedPath, progress is null ? null : new FileProgress(progress, start, share));
+                    progress?.Report(start + share);
+                }
             }
-            catch (Exception exception) when (exception is not OperationCanceledException)
+            catch (Exception exception) when (exception is not (OperationCanceledException or ConversionException or NotSupportedException))
             {
                 throw new ConversionException(inputPath, exception);
             }
-
-            progress?.Report((index + 1d) / inputPaths.Count);
         }
 
         return batch.Commit();
@@ -110,8 +133,8 @@ public sealed class ConversionRunner(
     private sealed record Step(string OutputName, Func<string, IProgress<double>?, Task> Run);
 
     /// <summary>Maps one file's progress onto its share of the whole job.</summary>
-    private sealed class FileProgress(IProgress<double> job, int index, int count) : IProgress<double>
+    private sealed class FileProgress(IProgress<double> job, double start, double share) : IProgress<double>
     {
-        public void Report(double value) => job.Report((index + value) / count);
+        public void Report(double value) => job.Report(start + value * share);
     }
 }

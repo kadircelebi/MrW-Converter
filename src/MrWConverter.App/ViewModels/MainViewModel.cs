@@ -9,12 +9,14 @@ using MrWConverter.App.Resources;
 using MrWConverter.Core.Conversion;
 using MrWConverter.Core.Formats;
 using MrWConverter.Core.Media;
+using MrWConverter.Core.Office;
+using MrWConverter.Core.Pdf;
 using MrWConverter.Core.Settings;
 using MrWConverter.Core.Tools;
 
 namespace MrWConverter.App.ViewModels;
 
-public sealed partial class MainViewModel(FormatCatalog catalog, ConversionRunner runner, MediaEditor media, AppSettings settings, string settingsPath) : ObservableObject
+public sealed partial class MainViewModel(FormatCatalog catalog, ConversionRunner runner, MediaEditor media, OfficeRuntime office, AppSettings settings, string settingsPath) : ObservableObject
 {
     /// <summary>A chosen region or moment fits one file, and the media tools name their result by its format.</summary>
     private static readonly HashSet<string> OneFileTools =
@@ -25,6 +27,7 @@ public sealed partial class MainViewModel(FormatCatalog catalog, ConversionRunne
         MediaEditor.CropVideoId,
         MediaEditor.MuteVideoId,
         MediaEditor.SnapshotId,
+        PdfTools.SplitId,
     ];
 
     private const double VideoCropFrameShare = 0.1;
@@ -93,6 +96,12 @@ public sealed partial class MainViewModel(FormatCatalog catalog, ConversionRunne
     /// <summary>Asks which moment of this video to save. Null means they cancelled.</summary>
     public Func<string, MediaInfo, double?>? AskSnapshot { get; set; }
 
+    /// <summary>Asks what order these files go in and what size their pages are. Null means they cancelled.</summary>
+    public Func<IReadOnlyList<FileEntry>, (IReadOnlyList<string> Paths, PdfPageSize Size)?>? AskPdfMerge { get; set; }
+
+    /// <summary>Asks whether LibreOffice may be downloaded. Nothing is fetched without a yes.</summary>
+    public Func<bool>? AskOfficeDownload { get; set; }
+
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ConvertLabel))]
     [NotifyCanExecuteChangedFor(nameof(ConvertCommand))]
@@ -126,7 +135,7 @@ public sealed partial class MainViewModel(FormatCatalog catalog, ConversionRunne
     /// <summary>The tools that work on the given files, with the words and icons the app shows for them.</summary>
     public IReadOnlyList<ToolOption> ToolsFor(IReadOnlyCollection<string> paths) =>
         catalog.CommonTools(paths)
-            .Where(tool => paths.Count == 1 || !OneFileTools.Contains(tool))
+            .Where(tool => paths.Count == 1 ? tool != PdfTools.MergeId : !OneFileTools.Contains(tool))
             .Select(ToToolOption)
             .ToArray();
 
@@ -247,7 +256,32 @@ public sealed partial class MainViewModel(FormatCatalog catalog, ConversionRunne
     private Task ConvertAsync()
     {
         var format = SelectedTarget!.Format;
-        return RunJobAsync((paths, folder, progress, token) => runner.RunAsync(paths, format, folder, progress, token));
+        var needsOffice = NeedsOffice(Files.Select(file => file.Path));
+
+        if (needsOffice && !GetOfficeConsent())
+        {
+            return Task.CompletedTask;
+        }
+
+        return RunJobAsync(async (paths, folder, progress, token) =>
+        {
+            await FetchOfficeIfNeededAsync(needsOffice, progress, token);
+            return await runner.RunAsync(paths, format, folder, progress, token);
+        });
+    }
+
+    private bool NeedsOffice(IEnumerable<string> paths) => paths.Any(path => catalog.GroupOf(path) == "office");
+
+    private bool GetOfficeConsent() => office.IsReady || AskOfficeDownload?.Invoke() == true;
+
+    private async Task FetchOfficeIfNeededAsync(bool needed, IProgress<double> progress, CancellationToken cancellationToken)
+    {
+        if (needed && !office.IsReady)
+        {
+            Show(BannerKind.Info, Strings.StatusOfficeDownloading);
+            await office.DownloadAsync(progress, cancellationToken);
+            Show(BannerKind.None, "");
+        }
     }
 
     private bool CanRunTool(ToolOption? tool) =>
@@ -258,6 +292,8 @@ public sealed partial class MainViewModel(FormatCatalog catalog, ConversionRunne
     {
         ImageCropper.ToolId => EditAsync(Files[0], AskForCrop),
         ImageCensor.ToolId => EditAsync(Files[0], AskForCensor),
+        PdfTools.MergeId => MergePdfAsync(),
+        PdfTools.SplitId => SplitPdfAsync(Files[0]),
         MediaEditor.EditId => EditMediaAsync(Files[0], AskForEdit),
         MediaEditor.CropVideoId => EditMediaAsync(Files[0], AskForVideoCropAsync),
         MediaEditor.MuteVideoId => EditMediaAsync(Files[0], (format, info, _) => Task.FromResult<IReadOnlyList<IFileTool>?>([media.Mute(format, RequireVideo(info).DurationSeconds)])),
@@ -289,6 +325,70 @@ public sealed partial class MainViewModel(FormatCatalog catalog, ConversionRunne
 
     private static MediaInfo RequireVideo(MediaInfo info) =>
         info.HasVideo ? info : throw new InvalidDataException("The file has no video.");
+
+    private async Task MergePdfAsync()
+    {
+        if (AskPdfMerge?.Invoke(Files.ToArray()) is not { } choice)
+        {
+            return;
+        }
+
+        var needsOffice = NeedsOffice(choice.Paths);
+        if (needsOffice && !GetOfficeConsent())
+        {
+            return;
+        }
+
+        var converter = new OfficeConverter(office);
+        var tool = PdfTools.Merge(
+            choice.Paths,
+            catalog.FormatOf,
+            choice.Size,
+            (path, output, token) => converter.ConvertAsync(path, output, catalog.FormatOf(path), "pdf", null, token));
+
+        await RunJobAsync(async (_, folder, progress, token) =>
+        {
+            await FetchOfficeIfNeededAsync(needsOffice, progress, token);
+            return await runner.RunToolsAsync(choice.Paths[0], [tool], folder, progress, token);
+        });
+    }
+
+    private async Task SplitPdfAsync(FileEntry file)
+    {
+        IReadOnlyList<IFileTool> tools;
+
+        try
+        {
+            tools = await PdfTools.SplitAsync(file.Path);
+        }
+        catch (Exception exception) when (exception is not (OperationCanceledException or OutOfMemoryException))
+        {
+            Trace.TraceWarning("Could not read {0}: {1}", file.Path, exception);
+            Show(BannerKind.Error, FailureMessage(file.Path, exception));
+            return;
+        }
+
+        await RunJobAsync((paths, folder, progress, token) => runner.RunToolsAsync(paths[0], tools, folder, progress, token));
+    }
+
+    private static string FailureMessage(string path, Exception? cause)
+    {
+        var name = Path.GetFileName(path);
+
+        // Windows N has no Media Foundation, which the H.264 and AAC encoders come from.
+        if (cause is ToolFailedException && !File.Exists(Path.Combine(Environment.SystemDirectory, "mfplat.dll")))
+        {
+            return Strings.StatusMediaFeatureMissing;
+        }
+
+        return cause switch
+        {
+            PdfFileException { Problem: PdfProblem.Password } => Strings.StatusPdfPassword(name),
+            PdfFileException { Problem: PdfProblem.NoText } => Strings.StatusPdfNoText(name),
+            OfficeDownloadException => Strings.StatusOfficeDownloadFailed,
+            _ => Strings.StatusFileFailed(name),
+        };
+    }
 
     /// <summary>Reads the file for the user to work on, then runs the tool they set up, if they didn't cancel.</summary>
     private async Task EditMediaAsync(FileEntry file, Func<string, MediaInfo, string, Task<IReadOnlyList<IFileTool>?>> askUser)
@@ -368,14 +468,15 @@ public sealed partial class MainViewModel(FormatCatalog catalog, ConversionRunne
         {
             Show(BannerKind.Info, Strings.StatusCancelled);
         }
+        catch (OfficeDownloadException exception)
+        {
+            Trace.TraceWarning("LibreOffice: {0}", exception);
+            Show(BannerKind.Error, Strings.StatusOfficeDownloadFailed);
+        }
         catch (ConversionException exception)
         {
             Trace.TraceWarning("{0}: {1}", exception.Message, exception.InnerException);
-
-            // Windows N has no Media Foundation, which the H.264 and AAC encoders come from.
-            var mediaFeatureMissing = exception.InnerException is ToolFailedException
-                && !File.Exists(Path.Combine(Environment.SystemDirectory, "mfplat.dll"));
-            Show(BannerKind.Error, mediaFeatureMissing ? Strings.StatusMediaFeatureMissing : Strings.StatusFileFailed(Path.GetFileName(exception.FilePath)));
+            Show(BannerKind.Error, FailureMessage(exception.FilePath, exception.InnerException));
         }
         catch (NotSupportedException exception)
         {
@@ -446,6 +547,8 @@ public sealed partial class MainViewModel(FormatCatalog catalog, ConversionRunne
         MediaEditor.CropVideoId => new ToolOption(id, Strings.ToolCropVideo, ""),
         MediaEditor.MuteVideoId => new ToolOption(id, Strings.ToolMuteVideo, ""),
         MediaEditor.SnapshotId => new ToolOption(id, Strings.ToolSnapshot, ""),
+        PdfTools.MergeId => new ToolOption(id, Strings.ToolMergePdf, ""),
+        PdfTools.SplitId => new ToolOption(id, Strings.ToolSplitPdf, ""),
         _ => new ToolOption(id, id, ""),
     };
 }

@@ -12,6 +12,7 @@ using MrWConverter.App.Editor;
 using MrWConverter.App.Wheel;
 using MrWConverter.Core.Formats;
 using MrWConverter.Core.Media;
+using MrWConverter.Core.Pdf;
 using MrWConverter.Core.Tools;
 
 namespace MrWConverter.App;
@@ -43,6 +44,8 @@ public partial class MainWindow : Window
         viewModel.AskCensor = AskCensor;
         viewModel.AskEdit = AskEdit;
         viewModel.AskSnapshot = AskSnapshot;
+        viewModel.AskPdfMerge = AskPdfMerge;
+        viewModel.AskOfficeDownload = AskOfficeDownload;
         Loaded += async (_, _) => await ShowStartupStateAsync();
     }
 
@@ -63,6 +66,21 @@ public partial class MainWindow : Window
         var window = new EditWindow(_viewModel.Media, path, info) { Owner = this };
         return window.ShowDialog() == true ? (window.Edit, window.SeparateFiles) : null;
     }
+
+    private (IReadOnlyList<string> Paths, PdfPageSize Size)? AskPdfMerge(IReadOnlyList<FileEntry> files)
+    {
+        var window = new PdfMergeWindow(files) { Owner = this };
+        return window.ShowDialog() == true ? (window.OrderedPaths, window.PageSize) : null;
+    }
+
+    /// <summary>Says what is fetched, from whom and how big it is. Saying no leaves everything as it was.</summary>
+    private bool AskOfficeDownload() => MessageBox.Show(
+        this,
+        Strings.OfficeDownloadQuestion,
+        Strings.OfficeDownloadTitle,
+        MessageBoxButton.YesNo,
+        MessageBoxImage.Question,
+        MessageBoxResult.No) == MessageBoxResult.Yes;
 
     private double? AskSnapshot(string path, MediaInfo info)
     {

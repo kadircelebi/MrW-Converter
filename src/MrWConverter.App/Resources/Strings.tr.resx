@@ -4,7 +4,7 @@
   <resheader name="version"><value>2.0</value></resheader>
   <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
   <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
-  <data name="Intro"><value>Görsel, ses ve videoları başka formatlara dönüştürün.</value></data>
+  <data name="Intro"><value>Görsel, ses, video, PDF ve Office belgelerini başka formatlara dönüştürün.</value></data>
   <data name="DropHint"><value>Dosyalarınızı buraya bırakın</value></data>
   <data name="DropNow"><value>Eklemek için bırakın</value></data>
   <data name="PrivacyNote"><value>Dosyalarınız bu cihazdan çıkmaz.</value></data>
@@ -100,6 +100,26 @@
   <data name="EditSave"><value>Kaydet</value></data>
   <data name="EditHelp"><value>Boşluk oynatır. Oklar bir saniye, Shift ile bir kare gider. S böler, Delete siler, I ve O başı ve sonu keser, Ctrl+Z geri alır. Asıl dosya değişmez.</value></data>
   <data name="EditNoPlayback"><value>Windows bu formatı oynatamıyor. Kareleri yine görürsünüz, kaydetme de çalışır.</value></data>
+  <data name="ToolMergePdf"><value>Tek PDF yap</value></data>
+  <data name="ToolSplitPdf"><value>Sayfalara ayır</value></data>
+  <data name="PdfMergeUp"><value>Yukarı</value></data>
+  <data name="PdfMergeDown"><value>Aşağı</value></data>
+  <data name="PdfMergeSort"><value>Ada göre sırala</value></data>
+  <data name="PdfMergeOrder"><value>Dosyaların sırası</value></data>
+  <data name="PdfMergePageSize"><value>Görseller için sayfa boyutu</value></data>
+  <data name="PdfMergeSizePicture"><value>Görselle aynı</value></data>
+  <data name="PdfMergeHelp"><value>Alt ile ok tuşları da dosyayı taşır. PDF'ler kendi sayfalarını korur. Asıl dosyalar değişmez.</value></data>
+  <data name="PdfMergeSave"><value>PDF oluştur</value></data>
+  <data name="StatusPdfPassword"><value>{0} parola korumalı. Uygulama kilitli PDF'leri henüz açamıyor. Hiç dosya oluşturulmadı.</value></data>
+  <data name="StatusPdfNoText"><value>{0} içinde metin yok, büyük ihtimalle taranmış bir belge. Sayfalarını görsel olarak kaydedebilirsiniz. Hiç dosya oluşturulmadı.</value></data>
+  <data name="OfficeDownloadTitle" xml:space="preserve"><value>LibreOffice indirilsin mi?</value></data>
+  <data name="OfficeDownloadQuestion" xml:space="preserve"><value>Word, Excel ve PowerPoint dosyalarını PDF'e çevirmek için ücretsiz bir ofis paketi olan LibreOffice gerekiyor.
+
+LibreOffice'in yapımcısı The Document Foundation'dan 376 MB'lık bir dosya indirilecek, açıldığında yaklaşık 1,5 GB yer kaplayacak. Bu uygulamanın kendi klasörüne konur, yalnızca bu uygulama kullanır ve uygulamayı kaldırınca silinir. Belgeleriniz hiçbir yere gönderilmez.
+
+Şimdi indirilsin mi?</value></data>
+  <data name="StatusOfficeDownloading" xml:space="preserve"><value>LibreOffice indiriliyor. Bu yalnızca bir kez yapılır.</value></data>
+  <data name="StatusOfficeDownloadFailed" xml:space="preserve"><value>LibreOffice indirilemedi. İnternet bağlantınızı ve disk alanınızı kontrol edip yeniden deneyin. Hiç dosya oluşturulmadı.</value></data>
   <data name="CropTitle"><value>Kırp</value></data>
   <data name="CropArea"><value>Kırpma alanı</value></data>
   <data name="CropHelp"><value>Köşeleri sürükleyin. Klavyede ok tuşları alanı taşır, Shift ile birlikte boyutunu değiştirir.</value></data>

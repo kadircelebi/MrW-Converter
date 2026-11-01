@@ -97,6 +97,20 @@ public static class Strings
     public static string EditSave => Get();
     public static string EditHelp => Get();
     public static string EditNoPlayback => Get();
+    public static string ToolMergePdf => Get();
+    public static string ToolSplitPdf => Get();
+    public static string PdfMergeUp => Get();
+    public static string PdfMergeDown => Get();
+    public static string PdfMergeSort => Get();
+    public static string PdfMergeOrder => Get();
+    public static string PdfMergePageSize => Get();
+    public static string PdfMergeSizePicture => Get();
+    public static string PdfMergeHelp => Get();
+    public static string PdfMergeSave => Get();
+    public static string OfficeDownloadTitle => Get();
+    public static string OfficeDownloadQuestion => Get();
+    public static string StatusOfficeDownloading => Get();
+    public static string StatusOfficeDownloadFailed => Get();
     public static string ToolCropVideo => Get();
     public static string ToolMuteVideo => Get();
     public static string ToolSnapshot => Get();
@@ -116,6 +130,8 @@ public static class Strings
     public static string StatusDone(int count) => Format(count);
     public static string StatusFileFailed(string fileName) => Format(fileName);
     public static string StatusSaveFailed(string folder) => Format(folder);
+    public static string StatusPdfPassword(string fileName) => Format(fileName);
+    public static string StatusPdfNoText(string fileName) => Format(fileName);
 
     private static string Get([CallerMemberName] string key = "") =>
         Manager.GetString(key, CultureInfo.CurrentUICulture) ?? key;

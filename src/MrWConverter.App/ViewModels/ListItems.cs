@@ -1,9 +1,10 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
+using MrWConverter.Core.Pdf;
 
 namespace MrWConverter.App.ViewModels;
 
@@ -31,6 +32,7 @@ public sealed partial class FileEntry : ObservableObject
     /// <summary>A Segoe Fluent Icons character, shown until a thumbnail replaces it.</summary>
     public string Glyph => _group switch
     {
+        "document" or "office" => "",
         "image" => "",
         "audio" => "",
         _ => "",
@@ -47,6 +49,31 @@ public sealed partial class FileEntry : ObservableObject
         if (_group == "image")
         {
             Thumbnail = await Task.Run(() => ReadThumbnail(Path));
+        }
+        else if (_group == "document")
+        {
+            Thumbnail = await Task.Run(() => ReadPdfThumbnail(Path));
+        }
+    }
+
+    /// <summary>The first page. A locked or broken PDF keeps its icon, and says why when it is used.</summary>
+    private static BitmapImage? ReadPdfThumbnail(string path)
+    {
+        try
+        {
+            using var stream = new MemoryStream(PdfFiles.RenderPage(path, 0, ThumbnailPixels));
+            var image = new BitmapImage();
+            image.BeginInit();
+            image.CacheOption = BitmapCacheOption.OnLoad;
+            image.StreamSource = stream;
+            image.EndInit();
+            image.Freeze();
+            return image;
+        }
+        catch (Exception exception) when (exception is not OutOfMemoryException)
+        {
+            Trace.TraceInformation("No thumbnail for {0}: {1}", path, exception.Message);
+            return null;
         }
     }
 

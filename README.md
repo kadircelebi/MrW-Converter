@@ -10,6 +10,8 @@ Desteklenen formatlar:
 
 **Araçlar:** Görsellerde arka plan kaldırma (saydam PNG, cihazın dışına çıkmadan), kırpma ve sansürleme. Kırpma ve sansür aynı formatta yeni dosya üretir, EXIF silinir ve asıl dosya değişmez. Videolarda düzenleme (bölme, parça silme, baş ve son kesme; sonuç tek dosya veya ayrı parçalar), alan kırpma, sesi kaldırma ve kare alma; ses dosyalarında da düzenleme var.
 
+**PDF:** Görselleri tek tek veya sıralayıp tek PDF yapma, görsel ve PDF'leri birleştirme, PDF'i düzenlenebilir Word dosyasına çevirme, PDF'ten PNG, JPG veya metin çıkarma, PDF'i sayfalarına ayırma. Word, Excel ve PowerPoint dosyaları da PDF olur; bunun için LibreOffice ilk kullanımda kullanıcıya sorularak indirilir (376 MB). Dönüştürmeler cihazda çalışır, belgeler hiçbir yere gönderilmez.
+
 **Sistem tepsisi:** X düğmesi uygulamayı tepsiye gizleyebilir, çark orada da çalışır. İsteğe bağlı olarak Windows ile başlar (yalnızca MSIX sürümünde).
 
 **Sürükleme çarkı:** Alttaki ayar açıldığında, herhangi bir pencereden dosya sürüklerken Shift çarkı açar; bir dilime bırakmak işi başlatır. Araçlar dilimi üzerinde kısa süre beklemek çarkı araçlara çevirir, Geri dilimi formatlara döndürür. Çarkın ortasına bırakmak normal Windows işlemini yapar. Listedeki dosyalar için aynı çark Ctrl+Space ile açılır.

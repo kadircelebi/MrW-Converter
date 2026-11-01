@@ -1,4 +1,4 @@
-using MrWConverter.Core.Formats;
+﻿using MrWConverter.Core.Formats;
 
 namespace MrWConverter.Core.Tests;
 
@@ -103,7 +103,7 @@ public class FormatCatalogTests
     [Fact]
     public void EveryTarget_HasAConverter()
     {
-        IReadOnlyList<Conversion.IFileConverter> converters = [new Conversion.ImageConverter(), new Conversion.FfmpegConverter("unused")];
+        IReadOnlyList<Conversion.IFileConverter> converters = [new Conversion.ImageConverter(), new Conversion.FfmpegConverter("unused"), new Pdf.PdfConverter(), new Office.OfficeConverter(new Office.OfficeRuntime("unused", "unused"))];
 
         foreach (var input in _catalog.InputFormats)
         {

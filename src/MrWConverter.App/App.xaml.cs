@@ -10,6 +10,8 @@ using MrWConverter.App.ViewModels;
 using MrWConverter.App.Wheel;
 using MrWConverter.Core.Conversion;
 using MrWConverter.Core.Formats;
+using MrWConverter.Core.Office;
+using MrWConverter.Core.Pdf;
 using MrWConverter.Core.Settings;
 using MrWConverter.Core.Tools;
 
@@ -48,13 +50,15 @@ public partial class App : Application
         var catalog = FormatCatalog.Default;
         var ffmpegFolder = Path.Combine(AppContext.BaseDirectory, "ffmpeg");
         var modelPath = Path.Combine(AppContext.BaseDirectory, "models", "ben2-base.onnx");
+        var appData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "MrWConverter");
+        KeepLog(appData);
+        var office = new OfficeRuntime(Path.Combine(WindowsStartup.SharedDataFolder(appData), "office"), AppContext.BaseDirectory);
         var runner = new ConversionRunner(
             catalog,
-            [new ImageConverter(), new FfmpegConverter(ffmpegFolder)],
+            [new ImageConverter(), new FfmpegConverter(ffmpegFolder), new PdfConverter(), new OfficeConverter(office)],
             [new BackgroundRemover(modelPath)]);
-        var settingsPath = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "MrWConverter", "settings.json");
-        var viewModel = new MainViewModel(catalog, runner, new MediaEditor(ffmpegFolder), AppSettings.Load(settingsPath), settingsPath);
+        var settingsPath = Path.Combine(appData, "settings.json");
+        var viewModel = new MainViewModel(catalog, runner, new MediaEditor(ffmpegFolder), office, AppSettings.Load(settingsPath), settingsPath);
 
         var window = new MainWindow(viewModel, catalog);
         SessionEnding += (_, _) => window.ExitWithoutAsking();
@@ -91,6 +95,24 @@ public partial class App : Application
         exit.Click += (_, _) => window.ExitFromTray();
 
         return new ContextMenu { Items = { open, hideOnClose, new Separator(), exit } };
+    }
+
+    /// <summary>
+    /// Keeps this session's warnings and errors in a file on this device, so a problem can be looked into.
+    /// It holds file paths and error messages, is replaced at each start and never leaves the computer.
+    /// </summary>
+    private static void KeepLog(string folder)
+    {
+        try
+        {
+            Directory.CreateDirectory(folder);
+            Trace.AutoFlush = true;
+            Trace.Listeners.Add(new TextWriterTraceListener(new StreamWriter(Path.Combine(folder, "last-session.log"), append: false)));
+        }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
+        {
+            // The app works without its log.
+        }
     }
 
     /// <summary>Store policy 10.4.2: the app handles exceptions and stays responsive.</summary>
