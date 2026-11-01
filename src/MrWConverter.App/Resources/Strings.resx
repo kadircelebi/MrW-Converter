@@ -41,6 +41,8 @@
   <data name="AboutTitle"><value>About MrWConverter</value></data>
   <data name="AboutVersion"><value>Version</value></data>
   <data name="AboutFfmpegNotice"><value>This software uses libraries from the FFmpeg project under the LGPLv3.</value></data>
+  <data name="AboutSupport"><value>Buy us a coffee</value></data>
+  <data name="AboutSupportHelp"><value>Supporting us is entirely voluntary and changes nothing in the app. The link opens in your browser.</value></data>
   <data name="AboutNoticesUnavailable"><value>The license notices could not be read.</value></data>
   <data name="Close"><value>Close</value></data>
   <data name="DragWheel"><value>Drag _wheel</value></data>

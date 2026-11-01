@@ -41,6 +41,8 @@
   <data name="AboutTitle"><value>MrWConverter hakkında</value></data>
   <data name="AboutVersion"><value>Sürüm</value></data>
   <data name="AboutFfmpegNotice"><value>Bu yazılım, FFmpeg projesinin kütüphanelerini LGPLv3 lisansı altında kullanır.</value></data>
+  <data name="AboutSupport"><value>Bize kahve ısmarla</value></data>
+  <data name="AboutSupportHelp"><value>Destek olmak tamamen gönüllüdür ve uygulamada hiçbir şeyi değiştirmez. Bağlantı tarayıcınızda açılır.</value></data>
   <data name="AboutNoticesUnavailable"><value>Lisans bildirimleri okunamadı.</value></data>
   <data name="Close"><value>Kapat</value></data>
   <data name="DragWheel"><value>Sürükleme _çarkı</value></data>

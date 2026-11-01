@@ -1,5 +1,8 @@
 MrWConverter uses the following third-party software.
 
+The Buy Me a Coffee name and logo belong to Buy Me a Coffee. They appear only on the
+button that links to our page there, and Buy Me a Coffee does not endorse this app.
+
 FFmpeg
 This software uses libraries from the FFmpeg project under the LGPLv3.
 FFmpeg is not owned by the publisher of MrWConverter; it belongs to its respective authors.

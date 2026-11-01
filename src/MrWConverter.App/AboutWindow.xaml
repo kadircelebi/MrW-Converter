@@ -6,8 +6,41 @@
         Width="560" Height="520" MinWidth="360" MinHeight="320"
         WindowStartupLocation="CenterOwner"
         ShowInTaskbar="False">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Assets/BuyMeACoffeeLogo.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <!-- Their yellow in both themes, because the cup's dark outline would vanish on a dark button. -->
+            <Style x:Key="SupportButtonStyle" TargetType="Button">
+                <Setter Property="Foreground" Value="#0D0C22" />
+                <Setter Property="Background" Value="#FFDD00" />
+                <Setter Property="Padding" Value="14,7" />
+                <Setter Property="Cursor" Value="Hand" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="Face" CornerRadius="6" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="Face" Property="Background" Value="#FFE433" />
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="Face" Property="Background" Value="#E6C700" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </ResourceDictionary>
+    </Window.Resources>
     <Grid Margin="24">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -16,20 +49,44 @@
 
         <TextBlock x:Name="VersionText" Grid.Row="0" Margin="0,0,0,8" />
 
-        <TextBlock Grid.Row="1"
+        <DockPanel Grid.Row="1" Margin="0,0,0,16">
+            <Button x:Name="SupportButton"
+                    DockPanel.Dock="Right"
+                    Margin="16,0,0,0"
+                    VerticalAlignment="Center"
+                    Style="{StaticResource SupportButtonStyle}"
+                    AutomationProperties.Name="{x:Static res:Strings.AboutSupport}"
+                    AutomationProperties.HelpText="{x:Static res:Strings.AboutSupportHelp}"
+                    Click="Support_Click">
+                <StackPanel Orientation="Horizontal">
+                    <Image Height="22"
+                           Margin="0,0,8,0"
+                           Source="{StaticResource BuyMeACoffeeLogo}" />
+                    <TextBlock VerticalAlignment="Center"
+                               FontWeight="SemiBold"
+                               Text="{x:Static res:Strings.AboutSupport}" />
+                </StackPanel>
+            </Button>
+            <TextBlock Style="{StaticResource SecondaryText}"
+                       VerticalAlignment="Center"
+                       TextWrapping="Wrap"
+                       Text="{x:Static res:Strings.AboutSupportHelp}" />
+        </DockPanel>
+
+        <TextBlock Grid.Row="2"
                    Margin="0,0,0,16"
                    TextWrapping="Wrap"
                    Text="{x:Static res:Strings.AboutFfmpegNotice}" />
 
         <TextBox x:Name="NoticesText"
-                 Grid.Row="2"
+                 Grid.Row="3"
                  IsReadOnly="True"
                  TextWrapping="Wrap"
                  AcceptsReturn="True"
                  VerticalScrollBarVisibility="Auto"
                  AutomationProperties.Name="{x:Static res:Strings.AboutTitle}" />
 
-        <Button Grid.Row="3"
+        <Button Grid.Row="4"
                 Margin="0,16,0,0"
                 HorizontalAlignment="Right"
                 Content="{x:Static res:Strings.Close}"
