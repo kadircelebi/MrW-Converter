@@ -19,13 +19,16 @@ public sealed partial class FileEntry : ObservableObject
     {
         Path = path;
         Name = System.IO.Path.GetFileName(path);
-        Details = $"{format.ToUpperInvariant()} · {FormatSize(new FileInfo(path).Length)}";
+        Bytes = new FileInfo(path).Length;
+        Details = $"{format.ToUpperInvariant()} · {FormatSize(Bytes)}";
         _group = group;
     }
 
     public string Path { get; }
 
     public string Name { get; }
+
+    public long Bytes { get; }
 
     public string Details { get; }
 
@@ -122,7 +125,7 @@ public sealed partial class FileEntry : ObservableObject
         };
     }
 
-    private static string FormatSize(long bytes)
+    public static string FormatSize(long bytes)
     {
         string[] units = ["B", "KB", "MB", "GB", "TB"];
         var size = (double)bytes;

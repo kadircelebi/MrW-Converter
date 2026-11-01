@@ -418,7 +418,7 @@ public class MediaEditorTests
     {
         var catalog = FormatCatalog.Default;
 
-        Assert.Equal(["edit", "cropVideo", "muteVideo", "snapshot"], catalog.CommonTools(["a.mp4"]));
+        Assert.Equal(["shrink", "edit", "cropVideo", "muteVideo", "snapshot"], catalog.CommonTools(["a.mp4"]));
         Assert.Equal(["edit"], catalog.CommonTools(["a.mp3"]));
         Assert.Equal(["edit"], catalog.CommonTools(["a.mp4", "b.mp3"]));
         Assert.Empty(catalog.CommonTools(["a.gif"]));

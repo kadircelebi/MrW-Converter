@@ -96,6 +96,8 @@ public sealed class MediaEditor(string toolsFolder)
         null,
         (input, output, _, token) => WriteFrameAsync(input, output, seconds, null, token));
 
+    public IFileTool Shrink(string sourceFormat, ShrinkOptions options) => new VideoShrinker(toolsFolder, options, sourceFormat);
+
     private static async Task<byte[]> ReadPngAsync(Func<string, Task> write, CancellationToken cancellationToken)
     {
         // A file rather than the output stream, because ToolProcess reads output as text.

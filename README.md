@@ -8,6 +8,8 @@ Desteklenen formatlar:
 - **Ses:** MP3, M4A, WAV, FLAC, OGG, Opus; ayrıca AIFF ve WMA okunur
 - **Video:** MP4, MOV, MKV, WebM, GIF; ayrıca AVI ve WMV okunur
 
+**Küçült:** Görsel ve videoları orijinalin yüzdesine veya dosya başına MB sınırına indirir, en uzun kenarı da sınırlayabilir. Birden çok dosyada çalışır, sonuç asıl dosyadan büyük olmaz.
+
 **Araçlar:** Görsellerde arka plan kaldırma (saydam PNG, cihazın dışına çıkmadan), kırpma ve sansürleme. Kırpma ve sansür aynı formatta yeni dosya üretir, EXIF silinir ve asıl dosya değişmez. Videolarda düzenleme (bölme, parça silme, baş ve son kesme; sonuç tek dosya veya ayrı parçalar), alan kırpma, sesi kaldırma ve kare alma; ses dosyalarında da düzenleme var.
 
 **PDF:** Görselleri tek tek veya sıralayıp tek PDF yapma, görsel ve PDF'leri birleştirme, PDF'i düzenlenebilir Word dosyasına çevirme, PDF'ten PNG, JPG veya metin çıkarma, PDF'i sayfalarına ayırma. Word, Excel ve PowerPoint dosyaları da PDF olur; bunun için LibreOffice ilk kullanımda kullanıcıya sorularak indirilir (376 MB). Dönüştürmeler cihazda çalışır, belgeler hiçbir yere gönderilmez.

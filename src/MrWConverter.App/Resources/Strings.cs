@@ -35,6 +35,7 @@ public static class Strings
     public static string AllFilesFilter => Get();
     public static string StatusCancelled => Get();
     public static string StatusNoCommonTarget => Get();
+    public static string StatusOnlyCommonTools => Get();
     public static string UnexpectedErrorTitle => Get();
     public static string UnexpectedError => Get();
     public static string About => Get();
@@ -121,6 +122,15 @@ public static class Strings
     public static string SnapshotHelp => Get();
     public static string SnapshotSave => Get();
     public static string StatusMediaFeatureMissing => Get();
+    public static string ToolShrink => Get();
+    public static string ShrinkTarget => Get();
+    public static string ShrinkByShare => Get();
+    public static string ShrinkByLimit => Get();
+    public static string ShrinkNoTarget => Get();
+    public static string ShrinkLongestSide => Get();
+    public static string ShrinkSideKeep => Get();
+    public static string ShrinkHelp => Get();
+    public static string ShrinkSave => Get();
 
     // Screen readers need the text without the access key marker.
     public static string TargetFormatName => TargetFormat.Replace("_", "");
@@ -135,6 +145,9 @@ public static class Strings
     public static string StatusSaveFailed(string folder) => Format(folder);
     public static string StatusPdfPassword(string fileName) => Format(fileName);
     public static string StatusPdfNoText(string fileName) => Format(fileName);
+    public static string StatusShrinkTooSmall(string fileName) => Format(fileName);
+    public static string ShrinkShareValue(int percent) => Format(percent);
+    public static string StatusShrunk(string before, string after) => string.Format(CultureInfo.CurrentCulture, Get(), before, after);
 
     private static string Get([CallerMemberName] string key = "") =>
         Manager.GetString(key, CultureInfo.CurrentUICulture) ?? key;

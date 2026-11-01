@@ -45,6 +45,7 @@ public partial class MainWindow : Window
         viewModel.AskEdit = AskEdit;
         viewModel.AskSnapshot = AskSnapshot;
         viewModel.AskPdfMerge = AskPdfMerge;
+        viewModel.AskShrink = AskShrink;
         viewModel.AskOfficeDownload = AskOfficeDownload;
         Loaded += async (_, _) => await ShowStartupStateAsync();
     }
@@ -71,6 +72,12 @@ public partial class MainWindow : Window
     {
         var window = new PdfMergeWindow(files) { Owner = this };
         return window.ShowDialog() == true ? (window.OrderedPaths, window.PageSize) : null;
+    }
+
+    private ShrinkOptions? AskShrink(IReadOnlyList<FileEntry> files)
+    {
+        var window = new ShrinkWindow(files) { Owner = this };
+        return window.ShowDialog() == true ? window.Options : null;
     }
 
     /// <summary>Says what is fetched, from whom and how big it is. Saying no leaves everything as it was.</summary>

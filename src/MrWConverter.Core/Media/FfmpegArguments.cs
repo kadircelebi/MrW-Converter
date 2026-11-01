@@ -179,6 +179,43 @@ public static class FfmpegArguments
         output,
     ];
 
+    public static IReadOnlyList<string> ForShrink(string input, string output, string target, VideoShrinkPlan plan)
+    {
+        var options = plan.VideoBitrate is { } video ? AtBitrates(target, video, plan.AudioBitrate) : OutputOptions(target);
+        var filters = new[] { plan.FramesPerSecond is { } rate ? $"fps={Time(rate)}" : null, plan.ScaleTo }.OfType<string>().ToArray();
+
+        return
+        [
+            .. Header,
+            .. SafeInputOptions,
+            "-i", input,
+            .. filters.Length > 0 ? WithVideoFilter(options, string.Join(',', filters)) : options,
+            output,
+        ];
+    }
+
+    private static string[] AtBitrates(string target, int video, int audio) => target switch
+    {
+        "webm" =>
+        [
+            "-map", "0:v:0", "-map", "0:a:0?",
+            "-c:v", "libvpx-vp9", "-b:v", Bits(video), "-row-mt", "1", "-deadline", "good", "-cpu-used", "4",
+            "-pix_fmt", "yuv420p",
+            "-c:a", "libopus", "-b:a", Bits(audio),
+        ],
+        "mp4" or "mov" or "mkv" =>
+        [
+            "-map", "0:v:0", "-map", "0:a:0?",
+            "-vf", EvenDimensionsFilter,
+            "-c:v", H264Encoder, "-rate_control", "cbr", "-b:v", Bits(video),
+            "-c:a", AacEncoder, "-b:a", Bits(audio), "-ar", "48000", "-ac", "2",
+            .. target == "mkv" ? Array.Empty<string>() : ["-movflags", "+faststart"],
+        ],
+        _ => throw new ArgumentException($"No bitrates for format {target}.", nameof(target)),
+    };
+
+    private static string Bits(int bitsPerSecond) => bitsPerSecond.ToString(CultureInfo.InvariantCulture);
+
     /// <param name="maxSide">Shrinks the frame to fit, or null for its full size.</param>
     public static IReadOnlyList<string> ForFrame(string input, string output, double seconds, int? maxSide) =>
     [

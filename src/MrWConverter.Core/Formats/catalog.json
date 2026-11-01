@@ -10,7 +10,7 @@
       "name": "image",
       "inputs": [ "jpg", "png", "webp", "tiff", "bmp", "avif" ],
       "outputs": [ "jpg", "png", "webp", "tiff", "bmp", "avif", "pdf" ],
-      "tools": [ "removeBackground", "crop", "censor", "mergePdf" ]
+      "tools": [ "shrink", "removeBackground", "crop", "censor", "mergePdf" ]
     },
     {
       "name": "document",
@@ -34,7 +34,7 @@
       "name": "video",
       "inputs": [ "mp4", "mov", "mkv", "webm", "avi", "wmv" ],
       "outputs": [ "mp4", "mov", "mkv", "webm", "gif", "mp3", "m4a" ],
-      "tools": [ "edit", "cropVideo", "muteVideo", "snapshot" ]
+      "tools": [ "shrink", "edit", "cropVideo", "muteVideo", "snapshot" ]
     },
     {
       "name": "animation",

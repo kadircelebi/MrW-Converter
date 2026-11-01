@@ -63,15 +63,28 @@ public sealed class ConversionRunner(
         IFileTool tool,
         string outputDirectory,
         IProgress<double>? progress = null,
+        CancellationToken cancellationToken = default) =>
+        RunToolAsync(inputPaths, _ => tool, outputDirectory, progress, cancellationToken);
+
+    /// <summary>Runs a tool made for each file, for when the work or the result's format depends on the file.</summary>
+    public Task<IReadOnlyList<string>> RunToolAsync(
+        IReadOnlyList<string> inputPaths,
+        Func<string, IFileTool> toolFor,
+        string outputDirectory,
+        IProgress<double>? progress = null,
         CancellationToken cancellationToken = default)
     {
-        return RunCoreAsync(inputPaths, outputDirectory, progress, inputPath => Task.FromResult<IReadOnlyList<Step>>(
+        return RunCoreAsync(inputPaths, outputDirectory, progress, inputPath =>
+        {
+            var tool = toolFor(inputPath);
+
+            return Task.FromResult<IReadOnlyList<Step>>(
             [
                 new Step(
                     tool.OutputName(Path.GetFileNameWithoutExtension(inputPath)),
                     (output, fileProgress) => tool.RunAsync(inputPath, output, catalog.FormatOf(inputPath), fileProgress, cancellationToken)),
-            ]),
-            cancellationToken);
+            ]);
+        }, cancellationToken);
     }
 
     /// <summary>Runs several tools on one file, such as saving each clip of an edit, and publishes all or none of the results.</summary>

@@ -99,6 +99,9 @@ public sealed partial class MainViewModel(FormatCatalog catalog, ConversionRunne
     /// <summary>Asks what order these files go in and what size their pages are. Null means they cancelled.</summary>
     public Func<IReadOnlyList<FileEntry>, (IReadOnlyList<string> Paths, PdfPageSize Size)?>? AskPdfMerge { get; set; }
 
+    /// <summary>Asks how small these files should get. Null means they cancelled.</summary>
+    public Func<IReadOnlyList<FileEntry>, ShrinkOptions?>? AskShrink { get; set; }
+
     /// <summary>Asks whether LibreOffice may be downloaded. Nothing is fetched without a yes.</summary>
     public Func<bool>? AskOfficeDownload { get; set; }
 
@@ -292,6 +295,7 @@ public sealed partial class MainViewModel(FormatCatalog catalog, ConversionRunne
     {
         ImageCropper.ToolId => EditAsync(Files[0], AskForCrop),
         ImageCensor.ToolId => EditAsync(Files[0], AskForCensor),
+        ShrinkOptions.ToolId => ShrinkAsync(),
         PdfTools.MergeId => MergePdfAsync(),
         PdfTools.SplitId => SplitPdfAsync(Files[0]),
         MediaEditor.EditId => EditMediaAsync(Files[0], AskForEdit),
@@ -325,6 +329,27 @@ public sealed partial class MainViewModel(FormatCatalog catalog, ConversionRunne
 
     private static MediaInfo RequireVideo(MediaInfo info) =>
         info.HasVideo ? info : throw new InvalidDataException("The file has no video.");
+
+    private Task ShrinkAsync()
+    {
+        if (AskShrink?.Invoke(Files.ToArray()) is not { } options)
+        {
+            return Task.CompletedTask;
+        }
+
+        var before = Files.Sum(file => file.Bytes);
+
+        return RunJobAsync(
+            (paths, folder, progress, token) => runner.RunToolAsync(
+                paths,
+                path => catalog.GroupOf(path) == "image"
+                    ? new ImageShrinker(options, catalog.FormatOf(path))
+                    : media.Shrink(catalog.FormatOf(path), options),
+                folder,
+                progress,
+                token),
+            outputs => Strings.StatusShrunk(FileEntry.FormatSize(before), FileEntry.FormatSize(outputs.Sum(output => new FileInfo(output).Length))));
+    }
 
     private async Task MergePdfAsync()
     {
@@ -385,6 +410,7 @@ public sealed partial class MainViewModel(FormatCatalog catalog, ConversionRunne
         {
             PdfFileException { Problem: PdfProblem.Password } => Strings.StatusPdfPassword(name),
             PdfFileException { Problem: PdfProblem.NoText } => Strings.StatusPdfNoText(name),
+            CannotShrinkException => Strings.StatusShrinkTooSmall(name),
             OfficeDownloadException => Strings.StatusOfficeDownloadFailed,
             _ => Strings.StatusFileFailed(name),
         };
@@ -440,7 +466,8 @@ public sealed partial class MainViewModel(FormatCatalog catalog, ConversionRunne
     [RelayCommand(CanExecute = nameof(CanCancelJob))]
     private void CancelJob() => _jobCancellation?.Cancel();
 
-    private async Task RunJobAsync(Func<IReadOnlyList<string>, string, IProgress<double>, CancellationToken, Task<IReadOnlyList<string>>> job)
+    /// <param name="describe">What to say when it worked, in place of the number of files made.</param>
+    private async Task RunJobAsync(Func<IReadOnlyList<string>, string, IProgress<double>, CancellationToken, Task<IReadOnlyList<string>>> job, Func<IReadOnlyList<string>, string>? describe = null)
     {
         var outputDirectory = OutputDirectory!;
         using var cancellation = new CancellationTokenSource();
@@ -462,7 +489,7 @@ public sealed partial class MainViewModel(FormatCatalog catalog, ConversionRunne
             var outputs = await job(Files.Select(file => file.Path).ToArray(), outputDirectory, progress, cancellation.Token);
 
             _firstOutput = outputs[0];
-            Show(BannerKind.Success, Strings.StatusDone(outputs.Count));
+            Show(BannerKind.Success, describe?.Invoke(outputs) ?? Strings.StatusDone(outputs.Count));
         }
         catch (OperationCanceledException)
         {
@@ -522,7 +549,7 @@ public sealed partial class MainViewModel(FormatCatalog catalog, ConversionRunne
 
         if (Files.Count > 0 && Targets.Count == 0)
         {
-            Show(BannerKind.Info, Strings.StatusNoCommonTarget);
+            Show(BannerKind.Info, Tools.Count > 0 ? Strings.StatusOnlyCommonTools : Strings.StatusNoCommonTarget);
         }
 
         if (!_outputChosenByUser)
@@ -540,6 +567,7 @@ public sealed partial class MainViewModel(FormatCatalog catalog, ConversionRunne
 
     private static ToolOption ToToolOption(string id) => id switch
     {
+        ShrinkOptions.ToolId => new ToolOption(id, Strings.ToolShrink, ""),
         ImageCropper.ToolId => new ToolOption(id, Strings.ToolCrop, ""),
         ImageCensor.ToolId => new ToolOption(id, Strings.ToolCensor, ""),
         BackgroundRemover.ToolId => new ToolOption(id, Strings.ToolRemoveBackground, ""),

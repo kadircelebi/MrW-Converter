@@ -43,6 +43,13 @@ internal static class ImageFile
     /// </summary>
     public static void WriteWithoutMetadata(MagickImage image, string path, string format)
     {
+        RemoveMetadata(image);
+        image.Quality = LossyQuality;
+        image.Write(path, Formats[format]);
+    }
+
+    public static void RemoveMetadata(MagickImage image)
+    {
         var color = image.GetColorProfile();
         image.Strip();
 
@@ -52,8 +59,6 @@ internal static class ImageFile
         }
 
         image.Settings.SetDefine(MagickFormat.Png, "exclude-chunks", "date,time");
-        image.Quality = LossyQuality;
-        image.Write(path, Formats[format]);
     }
 
     /// <summary>

@@ -32,6 +32,7 @@
   <data name="FileCount"><value>Files: {0}</value></data>
   <data name="StatusCancelled"><value>Cancelled. No files were created.</value></data>
   <data name="StatusNoCommonTarget"><value>These files have no output format in common. Remove some from the list.</value></data>
+  <data name="StatusOnlyCommonTools"><value>These files have no output format in common, but the tools above work on all of them.</value></data>
   <data name="StatusRejected"><value>Skipped {0} item(s) that can't be converted.</value></data>
   <data name="StatusDone"><value>Done. Files created: {0}.</value></data>
   <data name="StatusFileFailed"><value>Couldn't convert {0}. The file may be damaged or unsupported. No files were created.</value></data>
@@ -123,6 +124,18 @@ A 376 MB file will be downloaded from The Document Foundation, the makers of Lib
 Download it now?</value></data>
   <data name="StatusOfficeDownloading" xml:space="preserve"><value>Downloading LibreOffice. This happens only once.</value></data>
   <data name="StatusOfficeDownloadFailed" xml:space="preserve"><value>LibreOffice could not be downloaded. Check your internet connection and disk space, then try again. No files were created.</value></data>
+  <data name="ToolShrink"><value>Shrink</value></data>
+  <data name="ShrinkTarget"><value>Target size</value></data>
+  <data name="ShrinkByShare"><value>A share of the original</value></data>
+  <data name="ShrinkShareValue"><value>{0}%</value></data>
+  <data name="ShrinkByLimit"><value>At most, for each file</value></data>
+  <data name="ShrinkNoTarget"><value>No size target</value></data>
+  <data name="ShrinkLongestSide"><value>Longest side</value></data>
+  <data name="ShrinkSideKeep"><value>Keep</value></data>
+  <data name="ShrinkHelp"><value>Quality goes down first, then the picture gets smaller if it has to. PNG, BMP and TIFF can only get smaller in pixels. A file already within the target is copied as it is. The originals do not change.</value></data>
+  <data name="ShrinkSave"><value>Shrink</value></data>
+  <data name="StatusShrunk"><value>Done: {0} → {1}</value></data>
+  <data name="StatusShrinkTooSmall"><value>{0} can't get that small. Choose a larger target. No files were created.</value></data>
   <data name="CropTitle"><value>Crop</value></data>
   <data name="CropArea"><value>Crop area</value></data>
   <data name="CropHelp"><value>Drag the corners. On the keyboard, the arrow keys move the area and Shift with them resizes it.</value></data>

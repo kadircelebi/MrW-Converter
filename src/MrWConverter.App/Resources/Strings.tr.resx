@@ -32,6 +32,7 @@
   <data name="FileCount"><value>{0} dosya</value></data>
   <data name="StatusCancelled"><value>İptal edildi. Hiç dosya oluşturulmadı.</value></data>
   <data name="StatusNoCommonTarget"><value>Bu dosyaların ortak bir çıktı formatı yok. Listeden bazılarını kaldırın.</value></data>
+  <data name="StatusOnlyCommonTools"><value>Bu dosyaların ortak çıktı formatı yok, ama yukarıdaki araçlar hepsinde çalışır.</value></data>
   <data name="StatusRejected"><value>Dönüştürülemeyen {0} öğe atlandı.</value></data>
   <data name="StatusDone"><value>Tamamlandı. {0} dosya oluşturuldu.</value></data>
   <data name="StatusFileFailed"><value>{0} dönüştürülemedi. Dosya bozuk veya desteklenmiyor olabilir. Hiç dosya oluşturulmadı.</value></data>
@@ -123,6 +124,18 @@ LibreOffice'in yapımcısı The Document Foundation'dan 376 MB'lık bir dosya in
 Şimdi indirilsin mi?</value></data>
   <data name="StatusOfficeDownloading" xml:space="preserve"><value>LibreOffice indiriliyor. Bu yalnızca bir kez yapılır.</value></data>
   <data name="StatusOfficeDownloadFailed" xml:space="preserve"><value>LibreOffice indirilemedi. İnternet bağlantınızı ve disk alanınızı kontrol edip yeniden deneyin. Hiç dosya oluşturulmadı.</value></data>
+  <data name="ToolShrink"><value>Küçült</value></data>
+  <data name="ShrinkTarget"><value>Hedef boyut</value></data>
+  <data name="ShrinkByShare"><value>Orijinalin yüzdesi</value></data>
+  <data name="ShrinkShareValue"><value>%{0}</value></data>
+  <data name="ShrinkByLimit"><value>Dosya başına en fazla</value></data>
+  <data name="ShrinkNoTarget"><value>Boyut hedefi yok</value></data>
+  <data name="ShrinkLongestSide"><value>En uzun kenar</value></data>
+  <data name="ShrinkSideKeep"><value>Değiştirme</value></data>
+  <data name="ShrinkHelp"><value>Önce kalite düşer, gerekirse görüntü de küçülür. PNG, BMP ve TIFF yalnızca piksel azaltarak küçülür. Zaten hedefin altında olan dosya aynen kopyalanır. Asıl dosyalar değişmez.</value></data>
+  <data name="ShrinkSave"><value>Küçült</value></data>
+  <data name="StatusShrunk"><value>Tamamlandı: {0} → {1}</value></data>
+  <data name="StatusShrinkTooSmall"><value>{0} bu kadar küçülemiyor. Daha büyük bir hedef seçin. Hiç dosya oluşturulmadı.</value></data>
   <data name="CropTitle"><value>Kırp</value></data>
   <data name="CropArea"><value>Kırpma alanı</value></data>
   <data name="CropHelp"><value>Köşeleri sürükleyin. Klavyede ok tuşları alanı taşır, Shift ile birlikte boyutunu değiştirir.</value></data>
