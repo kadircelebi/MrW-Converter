@@ -10,6 +10,7 @@
   <data name="PrivacyNote"><value>Dosyalarınız bu cihazdan çıkmaz.</value></data>
   <data name="KindImage"><value>Görsel</value></data>
   <data name="KindAudio"><value>Ses</value></data>
+  <data name="KindDocument"><value>Belge</value></data>
   <data name="KindVideo"><value>Video</value></data>
   <data name="ChooseFiles"><value>_Dosya seç</value></data>
   <data name="AddFiles"><value>_Dosya ekle</value></data>
@@ -46,6 +47,8 @@
   <data name="AboutNoticesUnavailable"><value>Lisans bildirimleri okunamadı.</value></data>
   <data name="Close"><value>Kapat</value></data>
   <data name="DragWheel"><value>Sürükleme _çarkı</value></data>
+  <data name="DragWheelHint"><value>Sürükleme çarkı için bir dosyayı sürüklerken Shift tuşuna basın.</value></data>
+  <data name="DragWheelHintOff"><value>Sürükleme çarkı için alttaki ayarı açın, sonra bir dosyayı sürüklerken Shift tuşuna basın.</value></data>
   <data name="DragWheelHelp"><value>Uygulama açıkken, herhangi bir pencereden dosya sürüklerken Shift'e basın. Araçlar dilimi üzerinde bekleyince araçlar açılır.</value></data>
   <data name="StartWithWindows"><value>_Windows ile başlat</value></data>
   <data name="StartWithWindowsHelp"><value>Oturum açtığınızda uygulama sistem tepsisinde sessizce başlar, sürükleme çarkı hazır olur.</value></data>

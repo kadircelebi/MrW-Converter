@@ -10,6 +10,7 @@
   <data name="PrivacyNote"><value>Your files stay on this device.</value></data>
   <data name="KindImage"><value>Images</value></data>
   <data name="KindAudio"><value>Audio</value></data>
+  <data name="KindDocument"><value>Document</value></data>
   <data name="KindVideo"><value>Video</value></data>
   <data name="ChooseFiles"><value>_Choose files</value></data>
   <data name="AddFiles"><value>_Add files</value></data>
@@ -46,6 +47,8 @@
   <data name="AboutNoticesUnavailable"><value>The license notices could not be read.</value></data>
   <data name="Close"><value>Close</value></data>
   <data name="DragWheel"><value>Drag _wheel</value></data>
+  <data name="DragWheelHint"><value>While dragging a file, press Shift to open the drag wheel.</value></data>
+  <data name="DragWheelHintOff"><value>To use the drag wheel, turn on the setting below, then press Shift while dragging a file.</value></data>
   <data name="DragWheelHelp"><value>While this app is open, press Shift as you drag files from any window. Pause over the Tools slice to see the tools.</value></data>
   <data name="StartWithWindows"><value>_Start with Windows</value></data>
   <data name="StartWithWindowsHelp"><value>When you sign in, the app starts quietly in the system tray so the drag wheel is ready.</value></data>

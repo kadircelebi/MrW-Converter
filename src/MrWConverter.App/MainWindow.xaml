@@ -91,7 +91,26 @@
                                 <TextBlock Style="{StaticResource SectionTitle}" HorizontalAlignment="Center" Text="{x:Static res:Strings.KindVideo}" />
                                 <TextBlock Style="{StaticResource SecondaryText}" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" FontSize="12" Text="MP4, MOV, MKV, WebM, GIF" />
                             </StackPanel>
+                            <StackPanel Width="190" Margin="8">
+                                <TextBlock Style="{StaticResource Icon}" Text="&#xE8A5;" FontSize="20" Margin="0,0,0,6" />
+                                <TextBlock Style="{StaticResource SectionTitle}" HorizontalAlignment="Center" Text="{x:Static res:Strings.KindDocument}" />
+                                <TextBlock Style="{StaticResource SecondaryText}" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" FontSize="12" Text="PDF, Word, Excel, PowerPoint" />
+                            </StackPanel>
                         </WrapPanel>
+
+                        <!-- The wheel is off until the user turns it on, so with it off the hint says that first. -->
+                        <TextBlock x:Name="DragWheelHintText" Margin="0,20,0,0" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" FontSize="13">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock" BasedOn="{StaticResource SecondaryText}">
+                                    <Setter Property="Text" Value="{x:Static res:Strings.DragWheelHintOff}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding DragWheelEnabled}" Value="True">
+                                            <Setter Property="Text" Value="{x:Static res:Strings.DragWheelHint}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
                     </StackPanel>
                 </Grid>
 

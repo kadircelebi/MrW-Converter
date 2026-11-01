@@ -16,6 +16,7 @@ public static class Strings
     public static string KindImage => Get();
     public static string KindAudio => Get();
     public static string KindVideo => Get();
+    public static string KindDocument => Get();
     public static string ChooseFiles => Get();
     public static string AddFiles => Get();
     public static string ClearFiles => Get();
@@ -46,6 +47,8 @@ public static class Strings
     public static string Close => Get();
     public static string DragWheel => Get();
     public static string DragWheelHelp => Get();
+    public static string DragWheelHint => Get();
+    public static string DragWheelHintOff => Get();
     public static string StartWithWindows => Get();
     public static string StartWithWindowsHelp => Get();
     public static string StartWithWindowsBlocked => Get();

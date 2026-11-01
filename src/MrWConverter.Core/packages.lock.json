@@ -73,32 +73,6 @@
         "resolved": "9.0.0",
         "contentHash": "hyJB4UlpAi19Xr9AXzu2NuagKC4lPfHObNMEAA0HmqFz2rX7wKgzeYzO/jM/eBHDhnUGFFEjk5cOoJaxqg5J4A=="
       }
-    },
-    "net10.0-windows10.0.19041/win-x64": {
-      "Magick.NET-Q8-AnyCPU": {
-        "type": "Direct",
-        "requested": "[15.0.0, )",
-        "resolved": "15.0.0",
-        "contentHash": "yECRj8M7/D7dIndVmvEbMsolIBC+lyd+Er3wM/p8MSCaTAqjXjYvqmfETu9u/QuJBKM/ofgZBUtRs4HqRicrow==",
-        "dependencies": {
-          "Magick.NET.Core": "15.0.0"
-        }
-      },
-      "Microsoft.ML.OnnxRuntime": {
-        "type": "Direct",
-        "requested": "[1.31.1, )",
-        "resolved": "1.31.1",
-        "contentHash": "XtsO/1JoKepkWbGk9/DcYtRUTduwJD68kw0eeaH5yy77YBivUZWhC1NBNlVecsBt9EitlQIjCd1hHDNXJ2jbQA==",
-        "dependencies": {
-          "Microsoft.ML.OnnxRuntime.Managed": "1.31.1"
-        }
-      },
-      "System.Security.Cryptography.Pkcs": {
-        "type": "Direct",
-        "requested": "[10.0.13, )",
-        "resolved": "10.0.13",
-        "contentHash": "a+EovgC1fBnwdlQ6cn3j4JFBfKqiFaFvoAhjisOoSvazLAcIznaBzPQP0oYnvccmeXfqUH1KebVZOxSeH6rMaw=="
-      }
     }
   }
 }
