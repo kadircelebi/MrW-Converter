@@ -56,6 +56,24 @@ public sealed class ConversionRunner(
             cancellationToken);
     }
 
+    /// <summary>Runs several tools on one file, such as saving each clip of an edit, and publishes all or none of the results.</summary>
+    public Task<IReadOnlyList<string>> RunToolsAsync(
+        string inputPath,
+        IReadOnlyList<IFileTool> tools,
+        string outputDirectory,
+        IProgress<double>? progress = null,
+        CancellationToken cancellationToken = default)
+    {
+        var next = 0;
+        return RunCoreAsync(Enumerable.Repeat(inputPath, tools.Count).ToArray(), outputDirectory, progress, path =>
+        {
+            var tool = tools[next++];
+            return new Step(
+                tool.OutputName(Path.GetFileNameWithoutExtension(path)),
+                (output, fileProgress) => tool.RunAsync(path, output, catalog.FormatOf(path), fileProgress, cancellationToken));
+        }, cancellationToken);
+    }
+
     private static async Task<IReadOnlyList<string>> RunCoreAsync(
         IReadOnlyList<string> inputPaths,
         string outputDirectory,

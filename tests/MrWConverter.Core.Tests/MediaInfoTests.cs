@@ -20,6 +20,20 @@ public class MediaInfoTests
     }
 
     [Theory]
+    [InlineData("30000/1001", 29.97)]
+    [InlineData("25/1", 25)]
+    [InlineData("0/0", 0)]
+    public void FrameRate_IsReadFromItsFraction(string fraction, double expected)
+    {
+        var info = MediaInfo.Parse($$"""
+            { "streams": [ { "codec_type": "video", "width": 2, "height": 2, "avg_frame_rate": "{{fraction}}" } ],
+              "format": { "duration": "1" } }
+            """);
+
+        Assert.Equal(expected, info.FramesPerSecond, 2);
+    }
+
+    [Theory]
     [InlineData(90)]
     [InlineData(-90)]
     [InlineData(270)]
@@ -32,6 +46,7 @@ public class MediaInfoTests
             """);
 
         Assert.Equal((1080, 1920), (info.Width, info.Height));
+        Assert.Equal(degrees, info.Rotation);
     }
 
     [Fact]

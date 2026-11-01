@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Text;
 using MrWConverter.Core.Tools;
 
 namespace MrWConverter.Core.Media;
@@ -55,7 +56,7 @@ public static class FfmpegArguments
     [
         "-v", "error",
         .. SafeInputOptions,
-        "-show_entries", "format=duration:stream=codec_type,width,height,duration:stream_side_data=rotation:stream_disposition=attached_pic",
+        "-show_entries", "format=duration:stream=codec_type,width,height,duration,avg_frame_rate:stream_side_data=rotation:stream_disposition=attached_pic",
         "-of", "json",
         input,
     ];
@@ -81,6 +82,80 @@ public static class FfmpegArguments
         .. OutputOptions(target),
         output,
     ];
+
+    /// <summary>
+    /// Cuts the ranges and joins them in one pass, so there are no temporary clips and sound
+    /// stays with its picture. It starts at the first range rather than decoding what comes before.
+    /// </summary>
+    public static IReadOnlyList<string> ForEdit(string input, string output, string target, IReadOnlyList<TimeRange> ranges, bool hasVideo, bool hasAudio)
+    {
+        var start = ranges[0].Start;
+        var options = OutputOptions(target);
+        var filters = new List<string>();
+        var inputs = new StringBuilder();
+
+        for (var index = 0; index < ranges.Count; index++)
+        {
+            var (from, to) = (Time(ranges[index].Start - start), Time(ranges[index].End - start));
+
+            if (hasVideo)
+            {
+                filters.Add($"[0:v:0]trim=start={from}:end={to},setpts=PTS-STARTPTS[v{index}]");
+                inputs.Append($"[v{index}]");
+            }
+
+            if (hasAudio)
+            {
+                filters.Add($"[0:a:0]atrim=start={from}:end={to},asetpts=PTS-STARTPTS[a{index}]");
+                inputs.Append($"[a{index}]");
+            }
+        }
+
+        var existingFilter = Array.IndexOf(options, "-vf");
+        var videoEnd = existingFilter < 0 ? "[video]" : "[joined]";
+        filters.Add($"{inputs}concat=n={ranges.Count}:v={(hasVideo ? 1 : 0)}:a={(hasAudio ? 1 : 0)}{(hasVideo ? videoEnd : "")}{(hasAudio ? "[audio]" : "")}");
+
+        if (hasVideo && existingFilter >= 0)
+        {
+            filters.Add($"[joined]{options[existingFilter + 1]}[video]");
+        }
+
+        return
+        [
+            .. Header,
+            "-ss", Time(start),
+            .. SafeInputOptions,
+            "-i", input,
+            "-filter_complex", string.Join(';', filters),
+            .. hasVideo ? new[] { "-map", "[video]" } : [],
+            .. hasAudio ? new[] { "-map", "[audio]" } : [],
+            .. WithoutStreamChoices(options),
+            output,
+        ];
+    }
+
+    /// <summary>The format's codec settings alone, for when a filter graph already picks the streams.</summary>
+    private static List<string> WithoutStreamChoices(string[] options)
+    {
+        var kept = new List<string>();
+
+        for (var index = 0; index < options.Length; index++)
+        {
+            switch (options[index])
+            {
+                case "-map" or "-vf":
+                    index++;
+                    break;
+                case "-vn":
+                    break;
+                default:
+                    kept.Add(options[index]);
+                    break;
+            }
+        }
+
+        return kept;
+    }
 
     public static IReadOnlyList<string> ForVideoCrop(string input, string output, string target, ImageRegion region) =>
     [
@@ -126,7 +201,7 @@ public static class FfmpegArguments
         .. Header,
         .. SafeInputOptions,
         "-i", input,
-        "-filter_complex", "[0:a:0]aformat=channel_layouts=mono,showwavespic=s=1400x240:colors=0x4CC2FF[wave]",
+        "-filter_complex", "[0:a:0]aformat=channel_layouts=mono,showwavespic=s=1400x240:colors=0x4CC2FF:scale=sqrt[wave]",
         "-map", "[wave]",
         "-frames:v", "1",
         "-update", "1",

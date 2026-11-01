@@ -41,7 +41,7 @@ public partial class MainWindow : Window
         viewModel.PropertyChanged += ViewModel_PropertyChanged;
         viewModel.AskCropRegion = AskCropRegion;
         viewModel.AskCensor = AskCensor;
-        viewModel.AskTrim = AskTrim;
+        viewModel.AskEdit = AskEdit;
         viewModel.AskSnapshot = AskSnapshot;
         Loaded += async (_, _) => await ShowStartupStateAsync();
     }
@@ -58,10 +58,10 @@ public partial class MainWindow : Window
         return window.ShowDialog() == true ? (window.Regions, window.ChosenStyle, window.MosaicTilePercent) : null;
     }
 
-    private (double Start, double End)? AskTrim(string path, MediaInfo info)
+    private (MediaEdit Edit, bool SeparateFiles)? AskEdit(string path, MediaInfo info)
     {
-        var window = new TrimWindow(_viewModel.Media, path, info) { Owner = this };
-        return window.ShowDialog() == true ? (window.Start, window.End) : null;
+        var window = new EditWindow(_viewModel.Media, path, info) { Owner = this };
+        return window.ShowDialog() == true ? (window.Edit, window.SeparateFiles) : null;
     }
 
     private double? AskSnapshot(string path, MediaInfo info)

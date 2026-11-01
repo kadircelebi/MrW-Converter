@@ -9,12 +9,10 @@ namespace MrWConverter.Core.Tools;
 /// </summary>
 public sealed class MediaEditor(string toolsFolder)
 {
-    public const string TrimId = "trim";
+    public const string EditId = "edit";
     public const string CropVideoId = "cropVideo";
     public const string MuteVideoId = "muteVideo";
     public const string SnapshotId = "snapshot";
-
-    public const double MinimumTrimSeconds = 0.1;
 
     // How far back to look when a time near the end has no frame left to show.
     private static readonly double[] FrameRetries = [0, 1, double.PositiveInfinity];
@@ -27,9 +25,9 @@ public sealed class MediaEditor(string toolsFolder)
         MediaInfo.Parse(await ToolProcess.RunAsync(Ffprobe, FfmpegArguments.ForMediaInfo(path), null, cancellationToken));
 
     /// <summary>One frame as a PNG, at most <see cref="FfmpegArguments.PreviewSide"/> pixels on its longest side.</summary>
-    public Task<byte[]> ReadFrameAsync(string path, double seconds, CancellationToken cancellationToken = default) =>
+    public Task<byte[]> ReadFrameAsync(string path, double seconds, CancellationToken cancellationToken = default, int maxSide = FfmpegArguments.PreviewSide) =>
         ReadPngAsync(
-            output => WriteFrameAsync(path, output, seconds, FfmpegArguments.PreviewSide, cancellationToken),
+            output => WriteFrameAsync(path, output, seconds, maxSide, cancellationToken),
             cancellationToken);
 
     /// <summary>A picture of the sound, transparent around the wave.</summary>
@@ -38,15 +36,43 @@ public sealed class MediaEditor(string toolsFolder)
             output => ToolProcess.RunAsync(Ffmpeg, FfmpegArguments.ForWaveform(path, output), null, cancellationToken),
             cancellationToken);
 
-    public IFileTool Trim(string sourceFormat, double start, double end)
+    /// <summary>What to run for this edit: one file with the kept parts joined, or one file for each kept clip.</summary>
+    public IReadOnlyList<IFileTool> SaveEdit(string sourceFormat, MediaEdit edit, MediaInfo info, bool separateFiles)
     {
         var target = FfmpegArguments.EditTarget(sourceFormat);
-        return new MediaTool(
-            TrimId,
-            stem => $"{stem}-trim.{target}",
-            end - start,
-            (input, output, parser, token) => ToolProcess.RunAsync(Ffmpeg, FfmpegArguments.ForTrim(input, output, target, start, end - start), parser, token));
+
+        if (separateFiles)
+        {
+            return edit.KeptClips
+                .Select((clip, index) => Cut(target, clip.Range, stem => $"{stem}-part{index + 1}.{target}"))
+                .ToArray();
+        }
+
+        var ranges = edit.KeptRanges;
+        if (ranges.Count == 1)
+        {
+            return [Cut(target, ranges[0], stem => $"{stem}-trim.{target}")];
+        }
+
+        return
+        [
+            new MediaTool(
+                EditId,
+                stem => $"{stem}-edit.{target}",
+                edit.KeptSeconds,
+                (input, output, parser, token) => ToolProcess.RunAsync(
+                    Ffmpeg,
+                    FfmpegArguments.ForEdit(input, output, target, ranges, info.HasVideo, info.HasAudio),
+                    parser,
+                    token)),
+        ];
     }
+
+    private IFileTool Cut(string target, TimeRange range, Func<string, string> outputName) => new MediaTool(
+        EditId,
+        outputName,
+        range.Length,
+        (input, output, parser, token) => ToolProcess.RunAsync(Ffmpeg, FfmpegArguments.ForTrim(input, output, target, range.Start, range.Length), parser, token));
 
     public IFileTool CropVideo(string sourceFormat, ImageRegion region, double durationSeconds)
     {

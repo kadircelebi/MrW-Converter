@@ -1,4 +1,4 @@
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -21,7 +21,7 @@ public sealed partial class MainViewModel(FormatCatalog catalog, ConversionRunne
     [
         ImageCropper.ToolId,
         ImageCensor.ToolId,
-        MediaEditor.TrimId,
+        MediaEditor.EditId,
         MediaEditor.CropVideoId,
         MediaEditor.MuteVideoId,
         MediaEditor.SnapshotId,
@@ -88,7 +88,7 @@ public sealed partial class MainViewModel(FormatCatalog catalog, ConversionRunne
     public Func<ImagePreview, (IReadOnlyList<ImageRegion> Regions, CensorStyle Style, double MosaicTilePercent)?>? AskCensor { get; set; }
 
     /// <summary>Asks which part of this file to keep. Null means they cancelled.</summary>
-    public Func<string, MediaInfo, (double Start, double End)?>? AskTrim { get; set; }
+    public Func<string, MediaInfo, (MediaEdit Edit, bool SeparateFiles)?>? AskEdit { get; set; }
 
     /// <summary>Asks which moment of this video to save. Null means they cancelled.</summary>
     public Func<string, MediaInfo, double?>? AskSnapshot { get; set; }
@@ -258,9 +258,9 @@ public sealed partial class MainViewModel(FormatCatalog catalog, ConversionRunne
     {
         ImageCropper.ToolId => EditAsync(Files[0], AskForCrop),
         ImageCensor.ToolId => EditAsync(Files[0], AskForCensor),
-        MediaEditor.TrimId => EditMediaAsync(Files[0], AskForTrim),
+        MediaEditor.EditId => EditMediaAsync(Files[0], AskForEdit),
         MediaEditor.CropVideoId => EditMediaAsync(Files[0], AskForVideoCropAsync),
-        MediaEditor.MuteVideoId => EditMediaAsync(Files[0], (format, info, _) => Task.FromResult<IFileTool?>(media.Mute(format, RequireVideo(info).DurationSeconds))),
+        MediaEditor.MuteVideoId => EditMediaAsync(Files[0], (format, info, _) => Task.FromResult<IReadOnlyList<IFileTool>?>([media.Mute(format, RequireVideo(info).DurationSeconds)])),
         MediaEditor.SnapshotId => EditMediaAsync(Files[0], AskForSnapshot),
         _ => RunJobAsync((paths, folder, progress, token) => runner.RunToolAsync(paths, tool.Id, folder, progress, token)),
     };
@@ -273,31 +273,31 @@ public sealed partial class MainViewModel(FormatCatalog catalog, ConversionRunne
             ? new ImageCensor(choice.Regions, preview.Format, choice.Style) { MosaicTilePercent = choice.MosaicTilePercent }
             : null;
 
-    private Task<IFileTool?> AskForTrim(string format, MediaInfo info, string path) =>
-        Task.FromResult(AskTrim?.Invoke(path, info) is { } range ? media.Trim(format, range.Start, range.End) : null);
+    private Task<IReadOnlyList<IFileTool>?> AskForEdit(string format, MediaInfo info, string path) =>
+        Task.FromResult(AskEdit?.Invoke(path, info) is { } choice ? media.SaveEdit(format, choice.Edit, info, choice.SeparateFiles) : null);
 
-    private Task<IFileTool?> AskForSnapshot(string format, MediaInfo info, string path) =>
-        Task.FromResult(AskSnapshot?.Invoke(path, RequireVideo(info)) is { } seconds ? media.Snapshot(seconds) : null);
+    private Task<IReadOnlyList<IFileTool>?> AskForSnapshot(string format, MediaInfo info, string path) =>
+        Task.FromResult<IReadOnlyList<IFileTool>?>(AskSnapshot?.Invoke(path, RequireVideo(info)) is { } seconds ? [media.Snapshot(seconds)] : null);
 
     /// <summary>The same crop window as for pictures, on a frame from early on, because videos often open on black.</summary>
-    private async Task<IFileTool?> AskForVideoCropAsync(string format, MediaInfo info, string path)
+    private async Task<IReadOnlyList<IFileTool>?> AskForVideoCropAsync(string format, MediaInfo info, string path)
     {
         var frame = await media.ReadFrameAsync(path, RequireVideo(info).DurationSeconds * VideoCropFrameShare);
         var preview = new ImagePreview(path, format, frame, info.Width, info.Height);
-        return AskCropRegion?.Invoke(preview) is { } region ? media.CropVideo(format, region, info.DurationSeconds) : null;
+        return AskCropRegion?.Invoke(preview) is { } region ? [media.CropVideo(format, region, info.DurationSeconds)] : null;
     }
 
     private static MediaInfo RequireVideo(MediaInfo info) =>
         info.HasVideo ? info : throw new InvalidDataException("The file has no video.");
 
     /// <summary>Reads the file for the user to work on, then runs the tool they set up, if they didn't cancel.</summary>
-    private async Task EditMediaAsync(FileEntry file, Func<string, MediaInfo, string, Task<IFileTool?>> askUser)
+    private async Task EditMediaAsync(FileEntry file, Func<string, MediaInfo, string, Task<IReadOnlyList<IFileTool>?>> askUser)
     {
-        IFileTool? tool;
+        IReadOnlyList<IFileTool>? tools;
 
         try
         {
-            tool = await askUser(catalog.FormatOf(file.Path), await media.ReadInfoAsync(file.Path), file.Path);
+            tools = await askUser(catalog.FormatOf(file.Path), await media.ReadInfoAsync(file.Path), file.Path);
         }
         catch (Exception exception) when (exception is ToolFailedException or InvalidDataException or JsonException or Win32Exception)
         {
@@ -306,9 +306,9 @@ public sealed partial class MainViewModel(FormatCatalog catalog, ConversionRunne
             return;
         }
 
-        if (tool is not null)
+        if (tools is not null)
         {
-            await RunJobAsync((paths, folder, progress, token) => runner.RunToolAsync(paths, tool, folder, progress, token));
+            await RunJobAsync((paths, folder, progress, token) => runner.RunToolsAsync(paths[0], tools, folder, progress, token));
         }
     }
 
@@ -442,7 +442,7 @@ public sealed partial class MainViewModel(FormatCatalog catalog, ConversionRunne
         ImageCropper.ToolId => new ToolOption(id, Strings.ToolCrop, ""),
         ImageCensor.ToolId => new ToolOption(id, Strings.ToolCensor, ""),
         BackgroundRemover.ToolId => new ToolOption(id, Strings.ToolRemoveBackground, ""),
-        MediaEditor.TrimId => new ToolOption(id, Strings.ToolTrim, ""),
+        MediaEditor.EditId => new ToolOption(id, Strings.ToolEdit, ""),
         MediaEditor.CropVideoId => new ToolOption(id, Strings.ToolCropVideo, ""),
         MediaEditor.MuteVideoId => new ToolOption(id, Strings.ToolMuteVideo, ""),
         MediaEditor.SnapshotId => new ToolOption(id, Strings.ToolSnapshot, ""),

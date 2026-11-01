@@ -16,13 +16,13 @@
       "name": "audio",
       "inputs": [ "mp3", "m4a", "wav", "flac", "ogg", "opus", "aiff", "wma" ],
       "outputs": [ "mp3", "m4a", "wav", "flac", "ogg", "opus" ],
-      "tools": [ "trim" ]
+      "tools": [ "edit" ]
     },
     {
       "name": "video",
       "inputs": [ "mp4", "mov", "mkv", "webm", "avi", "wmv" ],
       "outputs": [ "mp4", "mov", "mkv", "webm", "gif", "mp3", "m4a" ],
-      "tools": [ "trim", "cropVideo", "muteVideo", "snapshot" ]
+      "tools": [ "edit", "cropVideo", "muteVideo", "snapshot" ]
     },
     {
       "name": "animation",
