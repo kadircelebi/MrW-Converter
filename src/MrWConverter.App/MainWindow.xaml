@@ -378,6 +378,17 @@
                               ToolTip="{x:Static res:Strings.DragWheelHelp}"
                               AutomationProperties.HelpText="{x:Static res:Strings.DragWheelHelp}"
                               IsChecked="{Binding DragWheelEnabled}" />
+                    <CheckBox x:Name="StartWithWindowsToggle"
+                              DockPanel.Dock="Right"
+                              Margin="0,0,16,0"
+                              VerticalAlignment="Center"
+                              FontSize="12"
+                              Visibility="Collapsed"
+                              Content="{x:Static res:Strings.StartWithWindows}"
+                              ToolTip="{x:Static res:Strings.StartWithWindowsHelp}"
+                              AutomationProperties.HelpText="{x:Static res:Strings.StartWithWindowsHelp}"
+                              Checked="StartWithWindows_Changed"
+                              Unchecked="StartWithWindows_Changed" />
                 </DockPanel>
             </Grid>
             </Border>

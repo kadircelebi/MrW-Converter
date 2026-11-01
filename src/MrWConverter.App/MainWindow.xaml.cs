@@ -1,14 +1,17 @@
 ﻿using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Microsoft.Win32;
+using Windows.ApplicationModel;
 using MrWConverter.App.Resources;
 using MrWConverter.App.ViewModels;
 using MrWConverter.App.Editor;
 using MrWConverter.App.Wheel;
 using MrWConverter.Core.Formats;
+using MrWConverter.Core.Media;
 using MrWConverter.Core.Tools;
 
 namespace MrWConverter.App;
@@ -24,6 +27,9 @@ public partial class MainWindow : Window
     private readonly FormatCatalog _catalog;
     private bool _closeAfterJob;
     private bool _exitConfirmed;
+    private bool _askOnClose;
+    private bool _showingStartupState;
+    private StartupTask? _startupTask;
 
     public MainWindow(MainViewModel viewModel, FormatCatalog catalog)
     {
@@ -35,6 +41,9 @@ public partial class MainWindow : Window
         viewModel.PropertyChanged += ViewModel_PropertyChanged;
         viewModel.AskCropRegion = AskCropRegion;
         viewModel.AskCensor = AskCensor;
+        viewModel.AskTrim = AskTrim;
+        viewModel.AskSnapshot = AskSnapshot;
+        Loaded += async (_, _) => await ShowStartupStateAsync();
     }
 
     private ImageRegion? AskCropRegion(ImagePreview preview)
@@ -47,6 +56,18 @@ public partial class MainWindow : Window
     {
         var window = new CensorWindow(preview) { Owner = this };
         return window.ShowDialog() == true ? (window.Regions, window.ChosenStyle, window.MosaicTilePercent) : null;
+    }
+
+    private (double Start, double End)? AskTrim(string path, MediaInfo info)
+    {
+        var window = new TrimWindow(_viewModel.Media, path, info) { Owner = this };
+        return window.ShowDialog() == true ? (window.Start, window.End) : null;
+    }
+
+    private double? AskSnapshot(string path, MediaInfo info)
+    {
+        var window = new SnapshotWindow(_viewModel.Media, path, info) { Owner = this };
+        return window.ShowDialog() == true ? window.Seconds : null;
     }
 
     private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -72,15 +93,17 @@ public partial class MainWindow : Window
         {
             // Closing a minimized window from the taskbar can only mean quit, and a
             // dialog owned by a minimized window wouldn't be visible to answer anyway.
-            var choice = WindowState == WindowState.Minimized ? CloseChoice.Exit : AskHowToClose();
+            var choice = _viewModel.HideToTrayOnClose && !_askOnClose ? CloseChoice.Hide
+                : WindowState == WindowState.Minimized ? CloseChoice.Exit
+                : AskHowToClose();
 
             if (choice != CloseChoice.Exit)
             {
                 e.Cancel = true;
 
-                if (choice == CloseChoice.Minimize)
+                if (choice == CloseChoice.Hide)
                 {
-                    WindowState = WindowState.Minimized;
+                    Hide();
                 }
 
                 return;
@@ -101,7 +124,95 @@ public partial class MainWindow : Window
     {
         var window = new CloseAppWindow(_viewModel.IsBusy) { Owner = this };
         window.ShowDialog();
+
+        if (window.Choice == CloseChoice.Hide && window.DontAskAgain)
+        {
+            _viewModel.HideToTrayOnClose = true;
+        }
+
         return window.Choice;
+    }
+
+    /// <summary>The tray's Exit always quits, except that a running job or an open dialog gets looked at first.</summary>
+    public void ExitFromTray()
+    {
+        if (OwnedWindows.Count > 0)
+        {
+            BringToFront();
+        }
+        else if (_viewModel.IsBusy)
+        {
+            BringToFront();
+
+            // Asks even if the X button normally hides, because quitting would cancel the job.
+            _askOnClose = true;
+            Close();
+            _askOnClose = false;
+        }
+        else
+        {
+            _exitConfirmed = true;
+            Close();
+        }
+    }
+
+    /// <summary>A later copy of the app was started, perhaps with files.</summary>
+    public void ReceiveFiles(IReadOnlyList<string> paths)
+    {
+        BringToFront();
+
+        if (_viewModel.IsIdle && OwnedWindows.Count == 0)
+        {
+            _viewModel.AddFiles(paths);
+        }
+    }
+
+    private async Task ShowStartupStateAsync()
+    {
+        _startupTask = await WindowsStartup.FindTaskAsync();
+
+        if (_startupTask is not null)
+        {
+            StartWithWindowsToggle.Visibility = Visibility.Visible;
+            ShowStartupState();
+        }
+    }
+
+    private void ShowStartupState()
+    {
+        var state = _startupTask!.State;
+
+        _showingStartupState = true;
+        StartWithWindowsToggle.IsChecked = state is StartupTaskState.Enabled or StartupTaskState.EnabledByPolicy;
+        StartWithWindowsToggle.IsEnabled = state is not (StartupTaskState.EnabledByPolicy or StartupTaskState.DisabledByPolicy);
+        _showingStartupState = false;
+    }
+
+    /// <summary>Checked and Unchecked rather than Click, because a screen reader's toggle raises no Click.</summary>
+    private async void StartWithWindows_Changed(object sender, RoutedEventArgs e)
+    {
+        if (_showingStartupState)
+        {
+            return;
+        }
+
+        if (StartWithWindowsToggle.IsChecked == true)
+        {
+            var state = await _startupTask!.RequestEnableAsync();
+
+            // Windows doesn't let an app overrule the switch the user turned off in Settings.
+            if (state == StartupTaskState.DisabledByUser
+                && MessageBox.Show(this, Strings.StartWithWindowsBlocked, Strings.StartWithWindows.Replace("_", ""), MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.Yes)
+            {
+                Process.Start(new ProcessStartInfo("ms-settings:startupapps") { UseShellExecute = true });
+            }
+        }
+        else
+        {
+            _startupTask!.Disable();
+        }
+
+        ShowStartupState();
     }
 
     /// <summary>A live region only reaches screen readers when its change is raised explicitly.</summary>
@@ -191,12 +302,15 @@ public partial class MainWindow : Window
 
     public void BringToFront()
     {
+        Show();
+
         if (WindowState == WindowState.Minimized)
         {
             WindowState = WindowState.Normal;
         }
 
-        Activate();
+        // An open dialog blocks this window, so it is the one to bring up.
+        (OwnedWindows.Count > 0 ? OwnedWindows[OwnedWindows.Count - 1] : this).Activate();
     }
 
     private void OpenWheel_Click(object sender, RoutedEventArgs e) => OpenWheel();

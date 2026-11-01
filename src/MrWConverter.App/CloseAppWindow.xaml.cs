@@ -5,11 +5,11 @@ namespace MrWConverter.App;
 public enum CloseChoice
 {
     Cancel,
-    Minimize,
+    Hide,
     Exit,
 }
 
-/// <summary>Asks what the X button should do, because the wheel only works while the app stays open.</summary>
+/// <summary>Asks what the X button should do, because the wheel only works while the app keeps running.</summary>
 public partial class CloseAppWindow : Window
 {
     public CloseAppWindow(bool jobRunning)
@@ -17,12 +17,14 @@ public partial class CloseAppWindow : Window
         InitializeComponent();
 
         BusyText.Visibility = jobRunning ? Visibility.Visible : Visibility.Collapsed;
-        Loaded += (_, _) => MinimizeButton.Focus();
+        Loaded += (_, _) => HideButton.Focus();
     }
 
     public CloseChoice Choice { get; private set; } = CloseChoice.Cancel;
 
-    private void Minimize_Click(object sender, RoutedEventArgs e) => Finish(CloseChoice.Minimize);
+    public bool DontAskAgain => DontAskAgainBox.IsChecked == true;
+
+    private void Hide_Click(object sender, RoutedEventArgs e) => Finish(CloseChoice.Hide);
 
     private void Exit_Click(object sender, RoutedEventArgs e) => Finish(CloseChoice.Exit);
 

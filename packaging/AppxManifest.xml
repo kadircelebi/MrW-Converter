@@ -7,9 +7,10 @@
 <Package
   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5"
   xmlns:uap10="http://schemas.microsoft.com/appx/manifest/uap/windows10/10"
   xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
-  IgnorableNamespaces="uap uap10 rescap">
+  IgnorableNamespaces="uap uap5 uap10 rescap">
 
   <Identity Name="MrWConverter.Dev"
             Publisher="CN=MrWConverterDev"
@@ -48,6 +49,12 @@
                           Square44x44Logo="Assets\Square44x44Logo.png">
         <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" />
       </uap:VisualElements>
+      <Extensions>
+        <!-- Off until the user asks for it in the app. Keep TaskId in step with WindowsStartup.cs. -->
+        <uap5:Extension Category="windows.startupTask">
+          <uap5:StartupTask TaskId="MrWConverterStartup" Enabled="false" DisplayName="MrWConverter" />
+        </uap5:Extension>
+      </Extensions>
     </Application>
   </Applications>
 </Package>

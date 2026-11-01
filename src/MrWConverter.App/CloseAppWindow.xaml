@@ -25,13 +25,17 @@
                    Visibility="Collapsed"
                    Text="{x:Static res:Strings.CloseAppBusy}" />
 
-        <StackPanel Margin="0,24,0,0" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button x:Name="MinimizeButton"
+        <CheckBox x:Name="DontAskAgainBox"
+                  Margin="0,16,0,0"
+                  Content="{x:Static res:Strings.CloseAppDontAsk}" />
+
+        <StackPanel Margin="0,16,0,0" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button x:Name="HideButton"
                     Padding="16,7"
                     IsDefault="True"
                     Style="{DynamicResource AccentButtonStyle}"
-                    Content="{x:Static res:Strings.CloseAppMinimize}"
-                    Click="Minimize_Click" />
+                    Content="{x:Static res:Strings.CloseAppHide}"
+                    Click="Hide_Click" />
             <Button x:Name="ExitButton"
                     Margin="8,0,0,0"
                     Padding="16,7"

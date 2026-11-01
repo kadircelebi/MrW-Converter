@@ -2,6 +2,8 @@
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Threading;
 using MrWConverter.App.Resources;
 using MrWConverter.App.ViewModels;
@@ -16,13 +18,32 @@ namespace MrWConverter.App;
 public partial class App : Application
 {
     private WheelController? _wheel;
+    private TrayIcon? _tray;
+    private SingleInstance? _instance;
 
-    protected override void OnStartup(StartupEventArgs e)
+    protected override async void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
 
         DispatcherUnhandledException += OnDispatcherUnhandledException;
         TaskScheduler.UnobservedTaskException += OnUnobservedTaskException;
+
+        var startedAtSignIn = WindowsStartup.LaunchedAtSignIn;
+        var instanceName = $"MrWConverter-{Process.GetCurrentProcess().SessionId}";
+
+        _instance = SingleInstance.TryClaim(instanceName);
+        if (_instance is null)
+        {
+            // Signing in shouldn't pop up a copy the user already has running.
+            if (!startedAtSignIn)
+            {
+                NativeMethods.AllowSetForegroundWindow(NativeMethods.AnyProcess);
+                await SingleInstance.SendAsync(instanceName, e.Args);
+            }
+
+            Shutdown();
+            return;
+        }
 
         var catalog = FormatCatalog.Default;
         var ffmpegFolder = Path.Combine(AppContext.BaseDirectory, "ffmpeg");
@@ -33,20 +54,43 @@ public partial class App : Application
             [new BackgroundRemover(modelPath)]);
         var settingsPath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "MrWConverter", "settings.json");
-        var viewModel = new MainViewModel(catalog, runner, AppSettings.Load(settingsPath), settingsPath);
+        var viewModel = new MainViewModel(catalog, runner, new MediaEditor(ffmpegFolder), AppSettings.Load(settingsPath), settingsPath);
 
         var window = new MainWindow(viewModel, catalog);
         SessionEnding += (_, _) => window.ExitWithoutAsking();
-        window.Show();
+
+        if (!startedAtSignIn)
+        {
+            window.Show();
+        }
+
         _wheel = new WheelController(viewModel, window.BringToFront);
+        _tray = new TrayIcon(TrayMenu(window, viewModel), window.BringToFront);
+        _instance.FilesReceived += paths => Dispatcher.BeginInvoke(() => window.ReceiveFiles(paths));
 
         viewModel.AddFiles(e.Args);
     }
 
     protected override void OnExit(ExitEventArgs e)
     {
+        _tray?.Dispose();
         _wheel?.Dispose();
+        _instance?.Dispose();
         base.OnExit(e);
+    }
+
+    private static ContextMenu TrayMenu(MainWindow window, MainViewModel viewModel)
+    {
+        var open = new MenuItem { Header = Strings.TrayOpen, FontWeight = FontWeights.SemiBold };
+        open.Click += (_, _) => window.BringToFront();
+
+        var hideOnClose = new MenuItem { Header = Strings.TrayHideOnClose, IsCheckable = true };
+        hideOnClose.SetBinding(MenuItem.IsCheckedProperty, new Binding(nameof(MainViewModel.HideToTrayOnClose)) { Source = viewModel });
+
+        var exit = new MenuItem { Header = Strings.TrayExit };
+        exit.Click += (_, _) => window.ExitFromTray();
+
+        return new ContextMenu { Items = { open, hideOnClose, new Separator(), exit } };
     }
 
     /// <summary>Store policy 10.4.2: the app handles exceptions and stays responsive.</summary>

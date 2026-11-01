@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
   <resheader name="version"><value>2.0</value></resheader>
@@ -45,12 +45,19 @@
   <data name="Close"><value>Kapat</value></data>
   <data name="DragWheel"><value>Sürükleme _çarkı</value></data>
   <data name="DragWheelHelp"><value>Uygulama açıkken, herhangi bir pencereden dosya sürüklerken Shift'e basın. Araçlar dilimi üzerinde bekleyince araçlar açılır.</value></data>
+  <data name="StartWithWindows"><value>_Windows ile başlat</value></data>
+  <data name="StartWithWindowsHelp"><value>Oturum açtığınızda uygulama sistem tepsisinde sessizce başlar, sürükleme çarkı hazır olur.</value></data>
+  <data name="StartWithWindowsBlocked"><value>Windows ile başlatma, Windows Ayarları'nda kapatılmış ve yalnızca siz oradan açabilirsiniz. Ayarlar açılsın mı?</value></data>
+  <data name="TrayOpen"><value>MrWConverter'ı _aç</value></data>
+  <data name="TrayHideOnClose"><value>X'e basınca _sormadan tepsiye gizle</value></data>
+  <data name="TrayExit"><value>_Çıkış</value></data>
+  <data name="CloseAppDontAsk"><value>Bir dahaki sefere sormadan gizle</value></data>
   <data name="ToolsTitle"><value>Araçlar</value></data>
   <data name="ToolRemoveBackground"><value>Arka planı kaldır</value></data>
   <data name="CloseAppQuestion"><value>MrWConverter kapatılsın mı?</value></data>
-  <data name="CloseAppHelp"><value>Küçültürseniz uygulama açık kalır, görev çubuğundan geri dönebilirsiniz.</value></data>
+  <data name="CloseAppHelp"><value>Tepsiye gizlerseniz sürükleme çarkı çalışmaya devam eder. Geri dönmek için saatin yanındaki simgeyi kullanın.</value></data>
   <data name="CloseAppBusy"><value>Kapatırsanız çalışan iş iptal edilir.</value></data>
-  <data name="CloseAppMinimize"><value>Küçült</value></data>
+  <data name="CloseAppHide"><value>Tepsiye gizle</value></data>
   <data name="ToolCrop"><value>Kırp</value></data>
   <data name="WheelBack"><value>Geri</value></data>
   <data name="ToolCensor"><value>Sansürle</value></data>
@@ -66,6 +73,19 @@
   <data name="CensorMosaicSize"><value>Kare boyutu</value></data>
   <data name="CensorMosaicWarning"><value>Mozaik orijinalden üretilir; şekiller seçilir, metinler bazen geri çözülebilir. Hassas bilgi için Gürültü veya Siyah seçin.</value></data>
   <data name="CensorCount"><value>{0} alan</value></data>
+  <data name="ToolTrim"><value>Kes</value></data>
+  <data name="ToolCropVideo"><value>Alan kırp</value></data>
+  <data name="ToolMuteVideo"><value>Sesi kaldır</value></data>
+  <data name="ToolSnapshot"><value>Kare al</value></data>
+  <data name="TrimStart"><value>Başlangıç</value></data>
+  <data name="TrimEnd"><value>Bitiş</value></data>
+  <data name="TrimKept"><value>Kalacak süre: {0}</value></data>
+  <data name="TrimHelp"><value>Kaydırıcıları taşıyın; küçük adımlar için ok tuşlarını kullanın. Asıl dosya değişmez.</value></data>
+  <data name="TrimSave"><value>Kes ve kaydet</value></data>
+  <data name="SnapshotTime"><value>Zaman</value></data>
+  <data name="SnapshotHelp"><value>Tam boyutlu PNG olarak kaydedilir. Asıl dosya değişmez.</value></data>
+  <data name="SnapshotSave"><value>Kareyi kaydet</value></data>
+  <data name="StatusMediaFeatureMissing"><value>Bu işlem için Windows Media Özellik Paketi gerekiyor. Ayarlar &gt; Sistem &gt; İsteğe bağlı özellikler bölümünden ekleyip yeniden deneyin. Hiç dosya oluşturulmadı.</value></data>
   <data name="CropTitle"><value>Kırp</value></data>
   <data name="CropArea"><value>Kırpma alanı</value></data>
   <data name="CropHelp"><value>Köşeleri sürükleyin. Klavyede ok tuşları alanı taşır, Shift ile birlikte boyutunu değiştirir.</value></data>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
   <resheader name="version"><value>2.0</value></resheader>
@@ -45,12 +45,19 @@
   <data name="Close"><value>Close</value></data>
   <data name="DragWheel"><value>Drag _wheel</value></data>
   <data name="DragWheelHelp"><value>While this app is open, press Shift as you drag files from any window. Pause over the Tools slice to see the tools.</value></data>
+  <data name="StartWithWindows"><value>_Start with Windows</value></data>
+  <data name="StartWithWindowsHelp"><value>When you sign in, the app starts quietly in the system tray so the drag wheel is ready.</value></data>
+  <data name="StartWithWindowsBlocked"><value>Starting with Windows is turned off in Windows Settings, and only you can turn it back on there. Open Settings?</value></data>
+  <data name="TrayOpen"><value>_Open MrWConverter</value></data>
+  <data name="TrayHideOnClose"><value>_Hide to tray on X without asking</value></data>
+  <data name="TrayExit"><value>E_xit</value></data>
+  <data name="CloseAppDontAsk"><value>Hide without asking next time</value></data>
   <data name="ToolsTitle"><value>Tools</value></data>
   <data name="ToolRemoveBackground"><value>Remove background</value></data>
   <data name="CloseAppQuestion"><value>Close MrWConverter?</value></data>
-  <data name="CloseAppHelp"><value>If you minimize it, the app stays open and you can return from the taskbar.</value></data>
+  <data name="CloseAppHelp"><value>If you hide it, the drag wheel keeps working. To come back, use the icon next to the clock.</value></data>
   <data name="CloseAppBusy"><value>Closing cancels the job that is running.</value></data>
-  <data name="CloseAppMinimize"><value>Minimize</value></data>
+  <data name="CloseAppHide"><value>Hide to tray</value></data>
   <data name="ToolCrop"><value>Crop</value></data>
   <data name="WheelBack"><value>Back</value></data>
   <data name="ToolCensor"><value>Censor</value></data>
@@ -66,6 +73,19 @@
   <data name="CensorMosaicSize"><value>Tile size</value></data>
   <data name="CensorMosaicWarning"><value>Mosaic is made from the original, so shapes stay visible and text can sometimes be recovered. For sensitive information, choose Noise or Black.</value></data>
   <data name="CensorCount"><value>Areas: {0}</value></data>
+  <data name="ToolTrim"><value>Trim</value></data>
+  <data name="ToolCropVideo"><value>Crop area</value></data>
+  <data name="ToolMuteVideo"><value>Remove sound</value></data>
+  <data name="ToolSnapshot"><value>Save a frame</value></data>
+  <data name="TrimStart"><value>Start</value></data>
+  <data name="TrimEnd"><value>End</value></data>
+  <data name="TrimKept"><value>Keeping {0}</value></data>
+  <data name="TrimHelp"><value>Move the sliders, or use the arrow keys for small steps. The original file does not change.</value></data>
+  <data name="TrimSave"><value>Trim and save</value></data>
+  <data name="SnapshotTime"><value>Time</value></data>
+  <data name="SnapshotHelp"><value>Saved as a full-size PNG. The original file does not change.</value></data>
+  <data name="SnapshotSave"><value>Save frame</value></data>
+  <data name="StatusMediaFeatureMissing"><value>This needs the Windows Media Feature Pack. Add it under Settings &gt; System &gt; Optional features, then try again. No files were created.</value></data>
   <data name="CropTitle"><value>Crop</value></data>
   <data name="CropArea"><value>Crop area</value></data>
   <data name="CropHelp"><value>Drag the corners. On the keyboard, the arrow keys move the area and Shift with them resizes it.</value></data>

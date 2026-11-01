@@ -61,7 +61,7 @@ public class FormatCatalogTests
     public void CommonTools_OfferBackgroundRemovalForImagesOnly()
     {
         Assert.Contains("removeBackground", _catalog.CommonTools(["a.png", "b.jpg"]));
-        Assert.Empty(_catalog.CommonTools(["a.mp3"]));
+        Assert.DoesNotContain("removeBackground", _catalog.CommonTools(["a.mp3"]));
         Assert.Empty(_catalog.CommonTools(["a.png", "b.mp4"]));
         Assert.Empty(_catalog.CommonTools(["a.exe"]));
     }

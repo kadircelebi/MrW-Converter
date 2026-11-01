@@ -12,6 +12,9 @@ public sealed class AppSettings
     /// <summary>Off until the user turns it on: the wheel appears over other apps, so that is their choice.</summary>
     public bool DragWheelEnabled { get; set; }
 
+    /// <summary>Set by "don't ask again": the X button hides to the tray without the question.</summary>
+    public bool HideToTrayOnClose { get; set; }
+
     public static AppSettings Load(string path)
     {
         try

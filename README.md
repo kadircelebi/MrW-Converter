@@ -8,7 +8,9 @@ Desteklenen formatlar:
 - **Ses:** MP3, M4A, WAV, FLAC, OGG, Opus; ayrıca AIFF ve WMA okunur
 - **Video:** MP4, MOV, MKV, WebM, GIF; ayrıca AVI ve WMV okunur
 
-**Araçlar:** Görsellerde arka plan kaldırma (saydam PNG, cihazın dışına çıkmadan), kırpma ve sansürleme. Kırpma ve sansür aynı formatta yeni dosya üretir, EXIF silinir ve asıl dosya değişmez.
+**Araçlar:** Görsellerde arka plan kaldırma (saydam PNG, cihazın dışına çıkmadan), kırpma ve sansürleme. Kırpma ve sansür aynı formatta yeni dosya üretir, EXIF silinir ve asıl dosya değişmez. Videolarda kesme, alan kırpma, sesi kaldırma ve kare alma; ses dosyalarında kesme var.
+
+**Sistem tepsisi:** X düğmesi uygulamayı tepsiye gizleyebilir, çark orada da çalışır. İsteğe bağlı olarak Windows ile başlar (yalnızca MSIX sürümünde).
 
 **Sürükleme çarkı:** Alttaki ayar açıldığında, herhangi bir pencereden dosya sürüklerken Shift çarkı açar; bir dilime bırakmak işi başlatır. Araçlar dilimi üzerinde kısa süre beklemek çarkı araçlara çevirir, Geri dilimi formatlara döndürür. Çarkın ortasına bırakmak normal Windows işlemini yapar. Listedeki dosyalar için aynı çark Ctrl+Space ile açılır.
 

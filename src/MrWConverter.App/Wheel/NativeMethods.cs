@@ -17,6 +17,51 @@ internal static class NativeMethods
 
     public const uint MoveNoZOrderNoActivate = 0x0014;
 
+    public const int TrayCallbackMessage = 0x8001;
+    public const int TraySelect = 0x0400;
+    public const int TrayKeySelect = 0x0401;
+    public const int ContextMenuMessage = 0x007B;
+    public const uint TrayAdd = 0;
+    public const uint TrayDelete = 2;
+    public const uint TraySetVersion = 4;
+    public const uint TrayVersion4 = 4;
+
+    // Message, icon, tip and "show the standard tip".
+    public const uint TrayIconFlags = 0x01 | 0x02 | 0x04 | 0x80;
+
+    public const int SmallIconWidth = 49;
+    public const uint IconImage = 1;
+    public const int AnyProcess = -1;
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+    public struct NotifyIconData
+    {
+        public int Size;
+        public IntPtr Window;
+        public uint Id;
+        public uint Flags;
+        public int CallbackMessage;
+        public IntPtr Icon;
+
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+        public string Tip;
+
+        public uint State;
+        public uint StateMask;
+
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+        public string Info;
+
+        public uint Version;
+
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
+        public string InfoTitle;
+
+        public uint InfoFlags;
+        public Guid Item;
+        public IntPtr BalloonIcon;
+    }
+
     [StructLayout(LayoutKind.Sequential)]
     public struct Point
     {
@@ -78,4 +123,34 @@ internal static class NativeMethods
 
     [DllImport("user32.dll", EntryPoint = "SetWindowLongPtrW")]
     public static extern IntPtr SetWindowLongPtr(IntPtr window, int index, IntPtr value);
+
+    [DllImport("shell32.dll", EntryPoint = "Shell_NotifyIconW", CharSet = CharSet.Unicode, SetLastError = true)]
+    public static extern bool Shell_NotifyIcon(uint message, ref NotifyIconData data);
+
+    [DllImport("user32.dll", EntryPoint = "RegisterWindowMessageW", CharSet = CharSet.Unicode)]
+    public static extern uint RegisterWindowMessage(string name);
+
+    [DllImport("user32.dll", EntryPoint = "LoadImageW", SetLastError = true)]
+    public static extern IntPtr LoadImage(IntPtr module, nint resource, uint type, int width, int height, uint flags);
+
+    [DllImport("kernel32.dll", EntryPoint = "GetModuleHandleW", CharSet = CharSet.Unicode)]
+    public static extern IntPtr GetModuleHandle(string? name);
+
+    [DllImport("user32.dll")]
+    public static extern bool DestroyIcon(IntPtr icon);
+
+    [DllImport("user32.dll")]
+    public static extern uint GetDpiForWindow(IntPtr window);
+
+    [DllImport("user32.dll")]
+    public static extern int GetSystemMetricsForDpi(int index, uint dpi);
+
+    [DllImport("user32.dll")]
+    public static extern bool SetForegroundWindow(IntPtr window);
+
+    [DllImport("user32.dll")]
+    public static extern bool AllowSetForegroundWindow(int process);
+
+    [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
+    public static extern int GetCurrentPackageFullName(ref int length, StringBuilder? name);
 }

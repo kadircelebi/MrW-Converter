@@ -1,21 +1,53 @@
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Text.Json;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MrWConverter.App.Resources;
 using MrWConverter.Core.Conversion;
 using MrWConverter.Core.Formats;
+using MrWConverter.Core.Media;
 using MrWConverter.Core.Settings;
 using MrWConverter.Core.Tools;
 
 namespace MrWConverter.App.ViewModels;
 
-public sealed partial class MainViewModel(FormatCatalog catalog, ConversionRunner runner, AppSettings settings, string settingsPath) : ObservableObject
+public sealed partial class MainViewModel(FormatCatalog catalog, ConversionRunner runner, MediaEditor media, AppSettings settings, string settingsPath) : ObservableObject
 {
+    /// <summary>A chosen region or moment fits one file, and the media tools name their result by its format.</summary>
+    private static readonly HashSet<string> OneFileTools =
+    [
+        ImageCropper.ToolId,
+        ImageCensor.ToolId,
+        MediaEditor.TrimId,
+        MediaEditor.CropVideoId,
+        MediaEditor.MuteVideoId,
+        MediaEditor.SnapshotId,
+    ];
+
+    private const double VideoCropFrameShare = 0.1;
+
     private CancellationTokenSource? _jobCancellation;
     private bool _outputChosenByUser;
     private string? _firstOutput;
+
+    public MediaEditor Media => media;
+
+    public bool HideToTrayOnClose
+    {
+        get => settings.HideToTrayOnClose;
+        set
+        {
+            if (settings.HideToTrayOnClose != value)
+            {
+                settings.HideToTrayOnClose = value;
+                settings.Save(settingsPath);
+                OnPropertyChanged();
+            }
+        }
+    }
 
     public bool DragWheelEnabled
     {
@@ -55,6 +87,12 @@ public sealed partial class MainViewModel(FormatCatalog catalog, ConversionRunne
     /// <summary>Asks the user what to censor and how. Null means they cancelled.</summary>
     public Func<ImagePreview, (IReadOnlyList<ImageRegion> Regions, CensorStyle Style, double MosaicTilePercent)?>? AskCensor { get; set; }
 
+    /// <summary>Asks which part of this file to keep. Null means they cancelled.</summary>
+    public Func<string, MediaInfo, (double Start, double End)?>? AskTrim { get; set; }
+
+    /// <summary>Asks which moment of this video to save. Null means they cancelled.</summary>
+    public Func<string, MediaInfo, double?>? AskSnapshot { get; set; }
+
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ConvertLabel))]
     [NotifyCanExecuteChangedFor(nameof(ConvertCommand))]
@@ -88,7 +126,7 @@ public sealed partial class MainViewModel(FormatCatalog catalog, ConversionRunne
     /// <summary>The tools that work on the given files, with the words and icons the app shows for them.</summary>
     public IReadOnlyList<ToolOption> ToolsFor(IReadOnlyCollection<string> paths) =>
         catalog.CommonTools(paths)
-            .Where(tool => paths.Count == 1 || (tool != ImageCropper.ToolId && tool != ImageCensor.ToolId)) // A chosen region fits one picture.
+            .Where(tool => paths.Count == 1 || !OneFileTools.Contains(tool))
             .Select(ToToolOption)
             .ToArray();
 
@@ -220,6 +258,10 @@ public sealed partial class MainViewModel(FormatCatalog catalog, ConversionRunne
     {
         ImageCropper.ToolId => EditAsync(Files[0], AskForCrop),
         ImageCensor.ToolId => EditAsync(Files[0], AskForCensor),
+        MediaEditor.TrimId => EditMediaAsync(Files[0], AskForTrim),
+        MediaEditor.CropVideoId => EditMediaAsync(Files[0], AskForVideoCropAsync),
+        MediaEditor.MuteVideoId => EditMediaAsync(Files[0], (format, info, _) => Task.FromResult<IFileTool?>(media.Mute(format, RequireVideo(info).DurationSeconds))),
+        MediaEditor.SnapshotId => EditMediaAsync(Files[0], AskForSnapshot),
         _ => RunJobAsync((paths, folder, progress, token) => runner.RunToolAsync(paths, tool.Id, folder, progress, token)),
     };
 
@@ -230,6 +272,45 @@ public sealed partial class MainViewModel(FormatCatalog catalog, ConversionRunne
         AskCensor?.Invoke(preview) is { Regions.Count: > 0 } choice
             ? new ImageCensor(choice.Regions, preview.Format, choice.Style) { MosaicTilePercent = choice.MosaicTilePercent }
             : null;
+
+    private Task<IFileTool?> AskForTrim(string format, MediaInfo info, string path) =>
+        Task.FromResult(AskTrim?.Invoke(path, info) is { } range ? media.Trim(format, range.Start, range.End) : null);
+
+    private Task<IFileTool?> AskForSnapshot(string format, MediaInfo info, string path) =>
+        Task.FromResult(AskSnapshot?.Invoke(path, RequireVideo(info)) is { } seconds ? media.Snapshot(seconds) : null);
+
+    /// <summary>The same crop window as for pictures, on a frame from early on, because videos often open on black.</summary>
+    private async Task<IFileTool?> AskForVideoCropAsync(string format, MediaInfo info, string path)
+    {
+        var frame = await media.ReadFrameAsync(path, RequireVideo(info).DurationSeconds * VideoCropFrameShare);
+        var preview = new ImagePreview(path, format, frame, info.Width, info.Height);
+        return AskCropRegion?.Invoke(preview) is { } region ? media.CropVideo(format, region, info.DurationSeconds) : null;
+    }
+
+    private static MediaInfo RequireVideo(MediaInfo info) =>
+        info.HasVideo ? info : throw new InvalidDataException("The file has no video.");
+
+    /// <summary>Reads the file for the user to work on, then runs the tool they set up, if they didn't cancel.</summary>
+    private async Task EditMediaAsync(FileEntry file, Func<string, MediaInfo, string, Task<IFileTool?>> askUser)
+    {
+        IFileTool? tool;
+
+        try
+        {
+            tool = await askUser(catalog.FormatOf(file.Path), await media.ReadInfoAsync(file.Path), file.Path);
+        }
+        catch (Exception exception) when (exception is ToolFailedException or InvalidDataException or JsonException or Win32Exception)
+        {
+            Trace.TraceWarning("Could not read {0}: {1}", file.Path, exception);
+            Show(BannerKind.Error, Strings.StatusFileFailed(file.Name));
+            return;
+        }
+
+        if (tool is not null)
+        {
+            await RunJobAsync((paths, folder, progress, token) => runner.RunToolAsync(paths, tool, folder, progress, token));
+        }
+    }
 
     /// <summary>Shows the image for the user to work on, then runs the tool they set up, if they didn't cancel.</summary>
     private async Task EditAsync(FileEntry file, Func<ImagePreview, IFileTool?> askUser)
@@ -290,7 +371,11 @@ public sealed partial class MainViewModel(FormatCatalog catalog, ConversionRunne
         catch (ConversionException exception)
         {
             Trace.TraceWarning("{0}: {1}", exception.Message, exception.InnerException);
-            Show(BannerKind.Error, Strings.StatusFileFailed(Path.GetFileName(exception.FilePath)));
+
+            // Windows N has no Media Foundation, which the H.264 and AAC encoders come from.
+            var mediaFeatureMissing = exception.InnerException is ToolFailedException
+                && !File.Exists(Path.Combine(Environment.SystemDirectory, "mfplat.dll"));
+            Show(BannerKind.Error, mediaFeatureMissing ? Strings.StatusMediaFeatureMissing : Strings.StatusFileFailed(Path.GetFileName(exception.FilePath)));
         }
         catch (NotSupportedException exception)
         {
@@ -357,6 +442,10 @@ public sealed partial class MainViewModel(FormatCatalog catalog, ConversionRunne
         ImageCropper.ToolId => new ToolOption(id, Strings.ToolCrop, ""),
         ImageCensor.ToolId => new ToolOption(id, Strings.ToolCensor, ""),
         BackgroundRemover.ToolId => new ToolOption(id, Strings.ToolRemoveBackground, ""),
+        MediaEditor.TrimId => new ToolOption(id, Strings.ToolTrim, ""),
+        MediaEditor.CropVideoId => new ToolOption(id, Strings.ToolCropVideo, ""),
+        MediaEditor.MuteVideoId => new ToolOption(id, Strings.ToolMuteVideo, ""),
+        MediaEditor.SnapshotId => new ToolOption(id, Strings.ToolSnapshot, ""),
         _ => new ToolOption(id, id, ""),
     };
 }
