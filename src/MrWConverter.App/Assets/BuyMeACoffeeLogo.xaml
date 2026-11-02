@@ -1,7 +1,7 @@
 <!--
   The Buy Me a Coffee cup, from their button assets:
   https://cdn.buymeacoffee.com/buttons/bmc-new-btn-logo.svg
-  Their trademark, used only on the button that links to our page. See docs\STORE-READINESS.md.
+  Their trademark, used only on the button that links to our page.
 -->
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">

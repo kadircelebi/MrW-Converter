@@ -1,97 +1,86 @@
-# MrWConverter
+<p align="center"><img src="packaging/Logo/StoreListing-300.png" alt="MrW Converter logo" width="120"></p>
 
-Windows için yerel dosya dönüştürücü. Hedef dağıtım kanalı Microsoft Store'dur; kurallar ve kalan işler için [docs/STORE-READINESS.md](docs/STORE-READINESS.md) dosyasına bakın.
+<h1 align="center">MrW Converter</h1>
 
-Desteklenen formatlar:
+<p align="center">Convert files by dragging them. Drag a file from any window, press Shift, and let go on the slice you want.</p>
 
-- **Görsel:** JPG, PNG, WebP, TIFF, BMP, AVIF
-- **Ses:** MP3, M4A, WAV, FLAC, OGG, Opus; ayrıca AIFF ve WMA okunur
-- **Video:** MP4, MOV, MKV, WebM, GIF; ayrıca AVI ve WMV okunur
+<p align="center"><a href="https://converter.mrwproject.com/">Website</a> · <a href="README.tr.md">Türkçe</a></p>
 
-**Küçült:** Görsel ve videoları orijinalin yüzdesine veya dosya başına MB sınırına indirir, en uzun kenarı da sınırlayabilir. Birden çok dosyada çalışır, sonuç asıl dosyadan büyük olmaz.
+![The drag wheel over the app's window](docs/images/en/wheel.png)
 
-**Araçlar:** Görsellerde arka plan kaldırma (saydam PNG, cihazın dışına çıkmadan), kırpma ve sansürleme. Kırpma ve sansür aynı formatta yeni dosya üretir, EXIF silinir ve asıl dosya değişmez. Videolarda düzenleme (bölme, parça silme, baş ve son kesme; sonuç tek dosya veya ayrı parçalar), alan kırpma, sesi kaldırma ve kare alma; ses dosyalarında da düzenleme var.
+A Windows app that converts, shrinks and edits pictures, sound, video and PDFs. Everything runs on your own computer: no account, no ads, no usage data, and your files are never uploaded.
 
-**PDF:** Görselleri tek tek veya sıralayıp tek PDF yapma, görsel ve PDF'leri birleştirme, PDF'i düzenlenebilir Word dosyasına çevirme, PDF'ten PNG, JPG veya metin çıkarma, PDF'i sayfalarına ayırma. Word, Excel ve PowerPoint dosyaları da PDF olur; bunun için LibreOffice ilk kullanımda kullanıcıya sorularak indirilir (376 MB). Dönüştürmeler cihazda çalışır, belgeler hiçbir yere gönderilmez.
+Coming soon to the Microsoft Store.
 
-**Sistem tepsisi:** X düğmesi uygulamayı tepsiye gizleyebilir, çark orada da çalışır. İsteğe bağlı olarak Windows ile başlar (yalnızca MSIX sürümünde).
+## What it does
 
-**Sürükleme çarkı:** Alttaki ayar açıldığında, herhangi bir pencereden dosya sürüklerken Shift çarkı açar; bir dilime bırakmak işi başlatır. Araçlar dilimi üzerinde kısa süre beklemek çarkı araçlara çevirir, Geri dilimi formatlara döndürür. Çarkın ortasına bırakmak normal Windows işlemini yapar. Listedeki dosyalar için aynı çark Ctrl+Space ile açılır.
+- **Drag wheel:** press Shift while dragging a file from any window, then let go on a format or a tool. It works while the app waits in the system tray, and your normal drags stay as they are.
+- **Convert:**
+  - Images: JPG, PNG, WebP, TIFF, BMP, AVIF, PDF
+  - Audio: MP3, M4A, WAV, FLAC, OGG, Opus; also reads AIFF and WMA
+  - Video: MP4, MOV, MKV, WebM, GIF; also reads AVI and WMV
+  - PDF to Word, PNG, JPG and text
+  - Word, Excel, PowerPoint and more to PDF, with LibreOffice, which the app downloads only if you agree
+- **Shrink:** bring videos and photos down to a target size, several files at once.
+- **Remove background:** a transparent PNG from an AI model that runs inside the app.
+- **PDF tools:** combine PDFs, pictures and Office files into one PDF, or split a PDF into pages.
+- **Edit video and audio:** split, delete parts, trim the start and end. For video, also crop an area, remove the sound and save a frame.
+- **Crop and censor pictures:** cover what you mark with black, noise or mosaic.
 
-## Yapı
+![The Shrink window](docs/images/en/shrink.png)
 
-| Klasör | İçerik |
+![The editing window](docs/images/en/edit.png)
+
+## Layout
+
+| Folder | What is there |
 | --- | --- |
-| `src/MrWConverter.Core` | Arayüzden bağımsız motor: format kataloğu, güvenli çıktı işlemi, dönüştürücüler |
-| `src/MrWConverter.App` | WPF arayüzü (.NET 10) |
-| `tests/MrWConverter.Core.Tests` | xUnit testleri |
-| `packaging` | MSIX bildirimi, mağaza görselleri ve logo. Logo değişince `scripts/make-icons.ps1` çalıştırılır |
-| `scripts/package.ps1` | MSIX üreten betik |
-| `third_party/ffmpeg` | `win-x64`: `build-ffmpeg.ps1` ile derlenen, uygulamayla gelen LGPL FFmpeg. `fixtures-win-x64`: testlerin örnek dosyaları için `setup-ffmpeg.ps1` ile inen tam derleme. İkisi de git dışında |
-| `third_party/models` | `setup-models.ps1` ile indirilen arka plan modeli; git dışında tutulur |
+| `src/MrWConverter.Core` | The engine, with no interface: format catalog, safe output, converters and tools |
+| `src/MrWConverter.App` | The WPF interface (.NET 10) |
+| `tests/MrWConverter.Core.Tests` | xUnit tests |
+| `packaging` | MSIX manifest, Store images and logo |
+| `scripts` | Downloads, builds and packaging |
 
-## Komutlar
+## Build from source
 
-Uygulamayla gelen FFmpeg'i derleme (sabit kaynaklar, makineye bir şey kurulmaz, yaklaşık 2 GB yer). Bu adım olmadan MSIX üretilmez:
+You need Windows 10 or 11 and the .NET 10 SDK. The MSIX also needs the Windows SDK.
+
+The FFmpeg that ships with the app is built from pinned sources, with only the parts the app uses. Nothing is installed on your machine, and it takes about 2 GB of disk:
 
 ```bash
 powershell -ExecutionPolicy Bypass -File scripts/build-ffmpeg.ps1
 ```
 
-Testlerin örnek dosyalarını üreten tam FFmpeg'i indirme (sabit sürüm, SHA-256 denetimli). Bu iki adım olmadan ses ve video testleri "atlandı" görünür:
+The tests make their sample files with the full FFmpeg, and the background removal model is a separate download. Without these, the tests that need them show as skipped:
 
 ```bash
 powershell -ExecutionPolicy Bypass -File scripts/setup-ffmpeg.ps1
 ```
 
-Arka plan modelini indirme (213 MB). Bu adım olmadan model testleri "atlandı" görünür, MSIX de üretilmez:
-
 ```bash
 powershell -ExecutionPolicy Bypass -File scripts/setup-models.ps1
 ```
 
-Derleme:
+Build, test and run:
 
 ```bash
 dotnet build MrWConverter.slnx
 ```
 
-Testler:
-
 ```bash
-dotnet test MrWConverter.slnx
+dotnet test tests/MrWConverter.Core.Tests
 ```
-
-Geliştirme sürümünü çalıştırma:
 
 ```bash
 dotnet run --project src/MrWConverter.App
 ```
 
-MSIX üretme (Windows SDK gerekir):
+Make an MSIX:
 
 ```bash
 powershell -ExecutionPolicy Bypass -File scripts/package.ps1
 ```
 
-Paket kimliğiyle deneme (Geliştirici Modu gerekir):
+## License
 
-```bash
-powershell -Command "Add-AppxPackage -Register artifacts\package\x64\layout\AppxManifest.xml"
-```
-
-Denemeyi kaldırma:
-
-```bash
-powershell -Command "Get-AppxPackage MrWConverter.Dev | Remove-AppxPackage"
-```
-
-## Yeni format eklemek
-
-1. `src/MrWConverter.Core/Formats/catalog.json` içine formatı ekleyin; arayüzdeki seçenekler buradan oluşur.
-2. Formatı işleyen bir `IFileConverter` yazın veya mevcut olanı genişletin, `App.xaml.cs` içinde kaydedin.
-3. Gerçek dosyayla test ekleyin.
-
-## Lisans
-
-Kendi kodumuz [MIT](LICENSE) lisanslıdır. Üçüncü taraf bileşenler kendi lisanslarıyla gelir ve [THIRD-PARTY-NOTICES.txt](src/MrWConverter.App/THIRD-PARTY-NOTICES.txt) dosyasında ve uygulamanın Hakkında penceresinde listelenir. FFmpeg için yayından önce yapılacaklar [docs/STORE-READINESS.md](docs/STORE-READINESS.md) dosyasındadır.
+The app's own code is under the [MIT License](LICENSE). Its components come with their own licenses, listed in [THIRD-PARTY-NOTICES.txt](src/MrWConverter.App/THIRD-PARTY-NOTICES.txt) and in the app's About window. FFmpeg is used under the LGPL 2.1, and the source of the exact build is at <https://converter.mrwproject.com/open-source/>.
