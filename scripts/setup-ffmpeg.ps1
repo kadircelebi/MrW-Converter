@@ -1,11 +1,12 @@
 <#
 .SYNOPSIS
-    Downloads the pinned LGPL FFmpeg build into third_party\ffmpeg\win-<architecture>.
+    Downloads the pinned full LGPL FFmpeg into third_party\ffmpeg\fixtures-win-<architecture>.
 
 .DESCRIPTION
-    The binaries are too large for the repository, so this runs once per checkout and
-    again whenever the pinned version changes. The folder is copied into the app, and
-    from there into the MSIX. Users never download FFmpeg; it ships inside the package.
+    The tests make their sample files with it, in formats the FFmpeg the app ships has no
+    encoder for. It does not go into the app: that one comes from scripts\build-ffmpeg.ps1.
+    The binaries are too large for the repository, so this runs once per checkout and again
+    whenever the pinned version changes.
 
     The month-end build is pinned because BtbN/FFmpeg-Builds keeps those for two years
     and removes other daily builds after about 14 days.
@@ -32,7 +33,7 @@ $builds = @{
 $build = $builds[$Architecture]
 $url = "https://github.com/BtbN/FFmpeg-Builds/releases/download/$tag/$($build.File)"
 $root = Split-Path $PSScriptRoot -Parent
-$target = Join-Path $root "third_party\ffmpeg\win-$Architecture"
+$target = Join-Path $root "third_party\ffmpeg\fixtures-win-$Architecture"
 $buildInfoPath = Join-Path $target 'BUILD-INFO.txt'
 
 if ((Test-Path $buildInfoPath) -and ((Get-Content $buildInfoPath -Raw) -match [regex]::Escape($build.Sha256))) {

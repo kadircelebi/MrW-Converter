@@ -40,7 +40,7 @@ $packageVersion = "$version.0"
 
 $ffmpeg = Join-Path $root "third_party\ffmpeg\win-$Architecture\ffmpeg.exe"
 if (-not (Test-Path $ffmpeg)) {
-    throw "FFmpeg is missing. Run: scripts\setup-ffmpeg.ps1 -Architecture $Architecture"
+    throw "FFmpeg is missing. Run: scripts\build-ffmpeg.ps1"
 }
 
 if (-not (Test-Path (Join-Path $root 'third_party\models\ben2-base.onnx'))) {

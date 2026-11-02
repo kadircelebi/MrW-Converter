@@ -7,7 +7,7 @@ namespace MrWConverter.Core.Tests;
 public class FfmpegConverterTests
 {
     private static readonly string Tools = FfmpegFolder.Path;
-    private static readonly string Ffmpeg = Path.Combine(Tools, "ffmpeg.exe");
+    private static readonly string Ffmpeg = Path.Combine(FfmpegFolder.FixturesPath, "ffmpeg.exe");
     private static readonly string Ffprobe = Path.Combine(Tools, "ffprobe.exe");
 
     private static FfmpegConverter Converter => new(Tools);
@@ -232,19 +232,24 @@ public class FfmpegConverterTests
 
 internal static class FfmpegFolder
 {
-    public static string Path { get; } = Find();
+    /// <summary>The FFmpeg the app ships, which is what the tests are about.</summary>
+    public static string Path { get; } = Find("win-x64");
 
-    public static bool IsSetUp => File.Exists(System.IO.Path.Combine(Path, "ffmpeg.exe"));
+    /// <summary>The full FFmpeg, for making samples in formats the shipped one has no encoder for.</summary>
+    public static string FixturesPath { get; } = Find("fixtures-win-x64");
 
-    public const string SkipReason = @"FFmpeg is not set up. Run scripts\setup-ffmpeg.ps1.";
+    public static bool IsSetUp =>
+        File.Exists(System.IO.Path.Combine(Path, "ffmpeg.exe")) && File.Exists(System.IO.Path.Combine(FixturesPath, "ffmpeg.exe"));
 
-    private static string Find()
+    public const string SkipReason = @"FFmpeg is not set up. Run scripts\setup-ffmpeg.ps1, then scriptsuild-ffmpeg.ps1.";
+
+    private static string Find(string name)
     {
         for (var folder = new DirectoryInfo(AppContext.BaseDirectory); folder is not null; folder = folder.Parent)
         {
             if (File.Exists(System.IO.Path.Combine(folder.FullName, "MrWConverter.slnx")))
             {
-                return System.IO.Path.Combine(folder.FullName, "third_party", "ffmpeg", "win-x64");
+                return System.IO.Path.Combine(folder.FullName, "third_party", "ffmpeg", name);
             }
         }
 

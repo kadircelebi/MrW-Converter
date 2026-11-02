@@ -27,12 +27,18 @@ Desteklenen formatlar:
 | `tests/MrWConverter.Core.Tests` | xUnit testleri |
 | `packaging` | MSIX bildirimi, mağaza görselleri ve logo. Logo değişince `scripts/make-icons.ps1` çalıştırılır |
 | `scripts/package.ps1` | MSIX üreten betik |
-| `third_party/ffmpeg` | `setup-ffmpeg.ps1` ile indirilen LGPL FFmpeg; git dışında tutulur |
+| `third_party/ffmpeg` | `win-x64`: `build-ffmpeg.ps1` ile derlenen, uygulamayla gelen LGPL FFmpeg. `fixtures-win-x64`: testlerin örnek dosyaları için `setup-ffmpeg.ps1` ile inen tam derleme. İkisi de git dışında |
 | `third_party/models` | `setup-models.ps1` ile indirilen arka plan modeli; git dışında tutulur |
 
 ## Komutlar
 
-İlk kurulumda FFmpeg'i indirme (sabit sürüm, SHA-256 denetimli, x64 için 73 MB). Bu adım olmadan ses ve video testleri "atlandı" görünür, MSIX de üretilmez:
+Uygulamayla gelen FFmpeg'i derleme (sabit kaynaklar, makineye bir şey kurulmaz, yaklaşık 2 GB yer). Bu adım olmadan MSIX üretilmez:
+
+```bash
+powershell -ExecutionPolicy Bypass -File scripts/build-ffmpeg.ps1
+```
+
+Testlerin örnek dosyalarını üreten tam FFmpeg'i indirme (sabit sürüm, SHA-256 denetimli). Bu iki adım olmadan ses ve video testleri "atlandı" görünür:
 
 ```bash
 powershell -ExecutionPolicy Bypass -File scripts/setup-ffmpeg.ps1

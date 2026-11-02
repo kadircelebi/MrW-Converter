@@ -29,7 +29,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- Put there by scripts\setup-ffmpeg.ps1; the binaries are not in the repository. -->
+    <!-- Put there by scripts\build-ffmpeg.ps1; the binaries are not in the repository. -->
     <Content Include="..\..\third_party\ffmpeg\$(FfmpegRuntime)\**" Link="ffmpeg\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <!-- Put there by scripts\setup-models.ps1; the file is not in the repository. -->
     <Content Include="..\..\third_party\models\*.onnx" Link="models\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />

@@ -42,7 +42,7 @@
   <data name="About"><value>A_bout</value></data>
   <data name="AboutTitle"><value>About MrW Converter</value></data>
   <data name="AboutVersion"><value>Version</value></data>
-  <data name="AboutFfmpegNotice"><value>This software uses libraries from the FFmpeg project under the LGPLv3.</value></data>
+  <data name="AboutFfmpegNotice"><value>This software uses libraries from the FFmpeg project under the LGPLv2.1.</value></data>
   <data name="AboutWebsite"><value>Website</value></data>
   <data name="AboutPrivacy"><value>Privacy policy</value></data>
   <data name="AboutSupport"><value>Buy us a coffee</value></data>

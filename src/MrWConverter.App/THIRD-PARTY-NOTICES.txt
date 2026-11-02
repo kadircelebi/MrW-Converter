@@ -4,14 +4,21 @@ The Buy Me a Coffee name and logo belong to Buy Me a Coffee. They appear only on
 button that links to our page there, and Buy Me a Coffee does not endorse this app.
 
 FFmpeg
-This software uses libraries from the FFmpeg project under the LGPLv3.
-FFmpeg is not owned by the publisher of MrWConverter; it belongs to its respective authors.
+This software uses libraries from the FFmpeg project under the LGPLv2.1.
+FFmpeg is not owned by the publisher of MrW Converter; it belongs to its respective authors.
 Website: https://ffmpeg.org
-Binaries: LGPL shared build from https://github.com/BtbN/FFmpeg-Builds, tag autobuild-2026-09-30-13-08
-Source: FFmpeg commit 2a571b6068, https://github.com/FFmpeg/FFmpeg/tree/2a571b6068
-The full license text and build configuration are in the app's "ffmpeg" folder:
-FFmpeg-LICENSE.txt and BUILD-INFO.txt.
-The FFmpeg libraries are separate DLL files in that folder.
+This build of FFmpeg 9.0.2 was made for this app from unmodified FFmpeg source. Its source code, and
+everything needed to build it the same way, is at https://converter.mrwproject.com/open-source/
+The FFmpeg libraries are separate DLL files in the app's "ffmpeg" folder. So is LAME, as libmp3lame-0.dll.
+BUILD-INFO.txt in that folder shows the build configuration.
+
+Inside the FFmpeg build, each under its own license. The full texts are in the "ffmpeg\licenses" folder.
+LAME 3.100: LGPL, https://lame.sourceforge.io
+Ogg 1.3.6, Vorbis 1.3.7, Opus 1.5.2: BSD, Xiph.Org Foundation, https://xiph.org
+libvpx 1.17.0: BSD, the WebM Project, https://www.webmproject.org
+dav1d 1.5.4: BSD, VideoLAN, https://www.videolan.org/projects/dav1d.html
+zlib 1.3.2: zlib license, https://zlib.net
+winpthreads and the MinGW-w64 runtime: MIT and BSD, https://www.mingw-w64.org
 
 BEN2 Base
 Background removal uses the BEN2 Base model, unchanged.

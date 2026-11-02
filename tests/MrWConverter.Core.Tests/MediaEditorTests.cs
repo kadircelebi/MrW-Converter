@@ -12,7 +12,7 @@ public class MediaEditorTests
     private const double Tolerance = 0.25;
 
     private static readonly string Tools = FfmpegFolder.Path;
-    private static readonly string Ffmpeg = Path.Combine(Tools, "ffmpeg.exe");
+    private static readonly string Ffmpeg = Path.Combine(FfmpegFolder.FixturesPath, "ffmpeg.exe");
     private static readonly string Ffprobe = Path.Combine(Tools, "ffprobe.exe");
 
     private static MediaEditor Editor => new(Tools);

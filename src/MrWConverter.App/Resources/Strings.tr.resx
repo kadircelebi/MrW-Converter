@@ -42,7 +42,7 @@
   <data name="About"><value>Hakkı_nda</value></data>
   <data name="AboutTitle"><value>MrW Converter hakkında</value></data>
   <data name="AboutVersion"><value>Sürüm</value></data>
-  <data name="AboutFfmpegNotice"><value>Bu yazılım, FFmpeg projesinin kütüphanelerini LGPLv3 lisansı altında kullanır.</value></data>
+  <data name="AboutFfmpegNotice"><value>Bu yazılım, FFmpeg projesinin kütüphanelerini LGPLv2.1 lisansı altında kullanır.</value></data>
   <data name="AboutWebsite"><value>Web sitesi</value></data>
   <data name="AboutPrivacy"><value>Gizlilik politikası</value></data>
   <data name="AboutSupport"><value>Bize kahve ısmarla</value></data>
