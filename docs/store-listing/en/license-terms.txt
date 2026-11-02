@@ -1,0 +1,7 @@
+MrW Converter is free to use, from MrWProject.
+
+This app uses libraries from the FFmpeg project under the GNU Lesser General Public License version 2.1, and LAME under the GNU Lesser General Public License. They are not owned by MrWProject and belong to their respective authors. Nothing in these terms or in the Store's terms limits your rights under those licenses, including modifying these libraries for your own use and reverse engineering for debugging such modifications.
+
+The source code of the exact build the app ships, and what it takes to build it the same way, is at https://converter.mrwproject.com/open-source/
+
+The licenses of all the components are listed in the app's About window.

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Identity Name, Publisher and PublisherDisplayName are development placeholders.
-  Replace them with the values Partner Center shows after the app name is reserved.
+  Identity from Partner Center > MrW Converter > Product identity (Store ID 9MTCKZXRFFXG, package
+  family name MrWProject.MrWConverter_1jmj08nda0ave). Do not change these values.
   scripts\package.ps1 fills in Version and ProcessorArchitecture.
 -->
 <Package
@@ -12,15 +12,15 @@
   xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
   IgnorableNamespaces="uap uap5 uap10 rescap">
 
-  <Identity Name="MrWConverter.Dev"
-            Publisher="CN=MrWConverterDev"
+  <Identity Name="MrWProject.MrWConverter"
+            Publisher="CN=BE7956F6-3D06-4F0C-B8B9-FAA5D1653D9F"
             Version="0.0.0.0"
             ProcessorArchitecture="x64" />
 
   <Properties>
     <!-- DisplayName is the name reserved in Partner Center. -->
     <DisplayName>MrW Converter</DisplayName>
-    <PublisherDisplayName>MrWConverter</PublisherDisplayName>
+    <PublisherDisplayName>MrWProject</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
 

@@ -1,0 +1,17 @@
+Drag wheel: press Shift while dragging a file, then pick a format or tool
+Convert images: JPG, PNG, WebP, TIFF, BMP, AVIF and PDF
+Convert audio: MP3, M4A, WAV, FLAC, OGG, Opus
+Convert video: MP4, MOV, MKV, WebM, GIF; extract the sound from a video
+PDF to editable Word, PNG, JPG and text
+Combine PDFs, pictures and Office files into one PDF, split a PDF into pages
+Word, Excel and PowerPoint to PDF (with free LibreOffice, downloaded if you agree)
+Shrink: bring videos and photos down to a target size, several files at once
+Remove backgrounds: a transparent PNG without your photo leaving your computer
+Edit video and audio: split, delete parts, trim the start and end
+Crop an area of a video, remove its sound, save a frame
+Crop pictures and censor with black, noise or mosaic
+Waits in the system tray and can start with Windows
+Files are processed on your computer and never uploaded
+Original files don't change; results are new files
+No account, no ads, no usage data
+English and Turkish interface

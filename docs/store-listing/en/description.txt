@@ -1,0 +1,35 @@
+Note: turning Word, Excel and PowerPoint files into PDF needs LibreOffice, a free office suite. The first time you do that, the app asks you and downloads it only if you agree (376 MB, about 1.5 GB once unpacked). Everything else works with no extra download.
+
+MrW Converter converts your files by dragging them. Drag a file from any window, press Shift, and let go on the slice you want when the wheel opens. The result is saved beside the original. Pictures, sound, video and PDFs are all processed on your own computer, and your files are never uploaded.
+
+THE DRAG WHEEL
+Turn it on once in the settings. It works while the app waits in the system tray, and the app can start with Windows if you like. Your normal drags stay as they are: the wheel opens only when you press Shift. Let go in the middle of the wheel and Windows does what it usually does. Pause over the Tools slice and shrinking, cropping and the other tools open. For files already in the list, Ctrl+Space opens the same wheel.
+
+FORMATS
+• Images: JPG, PNG, WebP, TIFF, BMP, AVIF and PDF
+• Audio: MP3, M4A, WAV, FLAC, OGG, Opus; also reads AIFF and WMA
+• Video: MP4, MOV, MKV, WebM, GIF; also reads AVI and WMV, and extracts MP3 or M4A
+• PDF to Word, PNG, JPG and text
+• Word, Excel, PowerPoint, OpenDocument, RTF and CSV to PDF (with LibreOffice)
+
+SHRINK
+Bring a video down to a size such as 25 MB, cut a photo to half its size, limit the longest side. The app measures the result and leaves no file over the limit. It works on several files at once, photos and videos together.
+
+REMOVE BACKGROUND
+A transparent PNG in one move. The AI model runs inside the app, so your photo stays on your computer.
+
+PDF TOOLS
+Turn a PDF into an editable Word document: text stays text and tables stay tables. Scanned pages come through as pictures. Combine PDFs, pictures and Office files into one PDF, or split a PDF into its pages.
+
+VIDEO AND AUDIO EDITING
+Split, delete the parts you don't want, trim the start and end, and check it by playing it back. Save one file or separate clips. For video there is also area cropping, removing the sound and saving a frame.
+
+PICTURE TOOLS
+Crop, or cover a licence plate or a face with black, noise or mosaic. The file's hidden information, such as its location, goes too.
+
+PRIVACY
+No account, no ads, no usage data. Original files don't change; results are new files. The app goes online only to download LibreOffice, if you agree.
+
+The interface is in English and Turkish and follows your Windows language. The app is free.
+
+MrW Converter uses FFmpeg under the LGPL 2.1. Source code: https://converter.mrwproject.com/open-source/

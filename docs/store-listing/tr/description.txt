@@ -1,0 +1,35 @@
+Not: Word, Excel ve PowerPoint dosyalarını PDF'e çevirmek için ücretsiz LibreOffice ofis paketi gerekir. Bunu ilk yaptığınızda uygulama size sorar ve onay verirseniz indirir (376 MB, açılınca yaklaşık 1,5 GB). Diğer tüm özellikler ek indirme olmadan çalışır.
+
+MrW Converter, dosyalarınızı sürükleyerek dönüştürür. Bir dosyayı herhangi bir pencereden sürüklerken Shift'e basın, çark açılsın, istediğiniz dilimin üstünde bırakın. Sonuç, asıl dosyanın yanına kaydedilir. Görsel, ses, video ve PDF; hepsi kendi bilgisayarınızda işlenir, dosyalarınız hiçbir yere yüklenmez.
+
+SÜRÜKLEME ÇARKI
+Ayarlardan bir kez açın; uygulama sistem tepsisinde beklerken de çalışır, isterseniz Windows ile başlar. Normal sürüklemelerinize karışmaz, çark yalnızca Shift'e basınca açılır. Çarkın ortasına bırakırsanız Windows'un olağan işlemi yapılır. Araçlar diliminin üstünde biraz bekleyince küçültme, kırpma ve diğer araçlar açılır. Listedeki dosyalar için aynı çark Ctrl+Space ile de açılır.
+
+FORMATLAR
+• Görsel: JPG, PNG, WebP, TIFF, BMP, AVIF ve PDF
+• Ses: MP3, M4A, WAV, FLAC, OGG, Opus; ayrıca AIFF ve WMA okur
+• Video: MP4, MOV, MKV, WebM, GIF; ayrıca AVI ve WMV okur, videodan MP3 veya M4A çıkarır
+• PDF'ten Word, PNG, JPG ve metne
+• Word, Excel, PowerPoint, OpenDocument, RTF ve CSV'den PDF'e (LibreOffice ile)
+
+KÜÇÜLT
+Videoyu "25 MB olsun" diye hedef boyuta indirin, fotoğrafı yarıya düşürün, en uzun kenarı sınırlayın. Uygulama sonucu ölçer ve sınırın üstünde dosya bırakmaz. Birden çok dosyada, fotoğraf ve video karışıkken de çalışır.
+
+ARKA PLANI KALDIR
+Tek hareketle saydam PNG. Yapay zekâ modeli uygulamanın içinde çalışır, fotoğrafınız bilgisayarınızdan çıkmaz.
+
+PDF ARAÇLARI
+PDF'i düzenlenebilir Word belgesine çevirin; metin metin, tablo tablo kalır. Taranmış sayfalar resim olarak gelir. PDF'leri, görselleri ve Office dosyalarını tek PDF yapın, PDF'i sayfalarına ayırın.
+
+VİDEO VE SES DÜZENLEME
+Bölün, istemediğiniz parçaları silin, baş ve sonu kesin, oynatarak kontrol edin. Sonuç tek dosya ya da ayrı parçalar olur. Videoda alan kırpma, sesi kaldırma ve kare alma da vardır.
+
+GÖRSEL ARAÇLARI
+Kırpın, plakayı veya yüzü siyah, gürültü ya da mozaikle sansürleyin. Sonuçta dosyanın içindeki konum gibi gizli bilgiler de silinir.
+
+GİZLİLİK
+Hesap, reklam ve kullanım verisi yoktur. Asıl dosyalar değişmez, sonuçlar yeni dosya olur. Uygulama yalnızca onay verirseniz LibreOffice'i indirmek için internete çıkar.
+
+Arayüz Türkçe ve İngilizcedir, Windows dilinize göre açılır. Uygulama ücretsizdir.
+
+MrW Converter, FFmpeg'i LGPL 2.1 lisansıyla kullanır. Kaynak kodu: https://converter.mrwproject.com/tr/open-source/
