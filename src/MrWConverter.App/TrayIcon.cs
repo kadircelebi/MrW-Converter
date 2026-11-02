@@ -13,7 +13,7 @@ namespace MrWConverter.App;
 /// </summary>
 public sealed class TrayIcon : IDisposable
 {
-    private const string Tip = "MrWConverter";
+    private const string Tip = "MrW Converter";
 
     // Windows' own default name for the icon of a program built from an .ico file.
     private const int ApplicationIconResource = 32512;

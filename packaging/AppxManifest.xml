@@ -18,7 +18,8 @@
             ProcessorArchitecture="x64" />
 
   <Properties>
-    <DisplayName>MrWConverter</DisplayName>
+    <!-- DisplayName is the name reserved in Partner Center. -->
+    <DisplayName>MrW Converter</DisplayName>
     <PublisherDisplayName>MrWConverter</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
@@ -46,7 +47,7 @@
                  Executable="MrWConverter.exe"
                  uap10:RuntimeBehavior="packagedClassicApp"
                  uap10:TrustLevel="mediumIL">
-      <uap:VisualElements DisplayName="MrWConverter"
+      <uap:VisualElements DisplayName="MrW Converter"
                           Description="Convert images, audio, video, PDFs and Office documents on your PC."
                           BackgroundColor="transparent"
                           Square150x150Logo="Assets\Square150x150Logo.png"
@@ -56,7 +57,7 @@
       <Extensions>
         <!-- Off until the user asks for it in the app. Keep TaskId in step with WindowsStartup.cs. -->
         <uap5:Extension Category="windows.startupTask">
-          <uap5:StartupTask TaskId="MrWConverterStartup" Enabled="false" DisplayName="MrWConverter" />
+          <uap5:StartupTask TaskId="MrWConverterStartup" Enabled="false" DisplayName="MrW Converter" />
         </uap5:Extension>
       </Extensions>
     </Application>

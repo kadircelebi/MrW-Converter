@@ -43,6 +43,8 @@ public static class Strings
     public static string AboutFfmpegNotice => Get();
     public static string AboutVersion => Get();
     public static string AboutNoticesUnavailable => Get();
+    public static string AboutWebsite => Get();
+    public static string AboutPrivacy => Get();
     public static string AboutSupport => Get();
     public static string AboutSupportHelp => Get();
     public static string Close => Get();

@@ -484,4 +484,7 @@ $RECYCLE.BIN/
 # Project
 _reference/
 artifacts/
+dist/
+do_not_share/
 third_party/
+!docs/releases/

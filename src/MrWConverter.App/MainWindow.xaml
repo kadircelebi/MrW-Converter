@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:res="clr-namespace:MrWConverter.App.Resources"
         xmlns:vm="clr-namespace:MrWConverter.App.ViewModels"
-        Title="MrWConverter"
+        Title="MrW Converter"
         Width="1000" Height="680" MinWidth="420" MinHeight="420"
         WindowStartupLocation="CenterScreen"
         AllowDrop="True"

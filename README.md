@@ -88,4 +88,4 @@ powershell -Command "Get-AppxPackage MrWConverter.Dev | Remove-AppxPackage"
 
 ## Lisans
 
-Henüz lisans seçilmedi. Üçüncü taraf bileşenler [THIRD-PARTY-NOTICES.txt](src/MrWConverter.App/THIRD-PARTY-NOTICES.txt) dosyasında ve uygulamanın Hakkında penceresinde listelenir. FFmpeg için yayından önce yapılacaklar [docs/STORE-READINESS.md](docs/STORE-READINESS.md) dosyasındadır.
+Kendi kodumuz [MIT](LICENSE) lisanslıdır. Üçüncü taraf bileşenler kendi lisanslarıyla gelir ve [THIRD-PARTY-NOTICES.txt](src/MrWConverter.App/THIRD-PARTY-NOTICES.txt) dosyasında ve uygulamanın Hakkında penceresinde listelenir. FFmpeg için yayından önce yapılacaklar [docs/STORE-READINESS.md](docs/STORE-READINESS.md) dosyasındadır.

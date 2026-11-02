@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
@@ -22,6 +23,16 @@ public partial class App : Application
     private WheelController? _wheel;
     private TrayIcon? _tray;
     private SingleInstance? _instance;
+
+    public App()
+    {
+        // For Store and website screenshots in the language Windows isn't set to. Not in the
+        // async OnStartup, because what that sets on the thread is undone when it first returns.
+        if (Environment.GetEnvironmentVariable("MRWCONVERTER_LANGUAGE") is { Length: > 0 } language)
+        {
+            CultureInfo.DefaultThreadCurrentCulture = CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.CurrentCulture = CultureInfo.CurrentUICulture = new CultureInfo(language);
+        }
+    }
 
     protected override async void OnStartup(StartupEventArgs e)
     {

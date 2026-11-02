@@ -47,7 +47,14 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <TextBlock x:Name="VersionText" Grid.Row="0" Margin="0,0,0,8" />
+        <StackPanel Grid.Row="0" Margin="0,0,0,12">
+            <TextBlock x:Name="VersionText" />
+            <TextBlock Margin="0,4,0,0">
+                <Hyperlink x:Name="WebsiteLink" RequestNavigate="Link_RequestNavigate"><Run Text="{x:Static res:Strings.AboutWebsite}" /></Hyperlink>
+                <Run Text=" · " />
+                <Hyperlink x:Name="PrivacyLink" RequestNavigate="Link_RequestNavigate"><Run Text="{x:Static res:Strings.AboutPrivacy}" /></Hyperlink>
+            </TextBlock>
+        </StackPanel>
 
         <DockPanel Grid.Row="1" Margin="0,0,0,16">
             <Button x:Name="SupportButton"
