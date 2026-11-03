@@ -10,7 +10,7 @@
 
 A Windows app that converts, shrinks and edits pictures, sound, video and PDFs. Everything runs on your own computer: no account, no ads, no usage data, and your files are never uploaded.
 
-Coming soon to the Microsoft Store.
+<p align="center"><a href="https://apps.microsoft.com/detail/9mtckzxrffxg"><img src="https://get.microsoft.com/images/en-us%20dark.svg" alt="Get it from Microsoft" width="200"></a></p>
 
 ## What it does
 

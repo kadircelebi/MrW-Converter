@@ -10,7 +10,7 @@
 
 Görsel, ses, video ve PDF dosyalarını dönüştüren, küçülten ve düzenleyen bir Windows uygulaması. Her şey kendi bilgisayarınızda çalışır: hesap, reklam ve kullanım verisi yoktur, dosyalarınız hiçbir yere yüklenmez.
 
-Yakında Microsoft Store'da.
+<p align="center"><a href="https://apps.microsoft.com/detail/9mtckzxrffxg"><img src="https://get.microsoft.com/images/en-us%20dark.svg" alt="Microsoft Store'dan edinin" width="200"></a></p>
 
 ## Neler yapar
 
