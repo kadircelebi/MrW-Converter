@@ -6,7 +6,7 @@
 
 <p align="center"><a href="https://converter.mrwproject.com/tr/">Web sitesi</a> · <a href="README.md">English</a></p>
 
-![Uygulama penceresinin üstünde sürükleme çarkı](docs/images/tr/wheel.png)
+![Uygulama penceresinin üstünde sürükleme çarkı](.github/images/tr/wheel.png)
 
 Görsel, ses, video ve PDF dosyalarını dönüştüren, küçülten ve düzenleyen bir Windows uygulaması. Her şey kendi bilgisayarınızda çalışır: hesap, reklam ve kullanım verisi yoktur, dosyalarınız hiçbir yere yüklenmez.
 
@@ -27,9 +27,9 @@ Görsel, ses, video ve PDF dosyalarını dönüştüren, küçülten ve düzenle
 - **Video ve ses düzenleme:** Bölün, parça silin, baş ve sonu kesin. Videoda alan kırpma, sesi kaldırma ve kare alma da vardır.
 - **Görsel kırpma ve sansür:** İşaretlediğiniz yeri siyah, gürültü veya mozaikle kapatın.
 
-![Küçült penceresi](docs/images/tr/shrink.png)
+![Küçült penceresi](.github/images/tr/shrink.png)
 
-![Düzenleme penceresi](docs/images/tr/edit.png)
+![Düzenleme penceresi](.github/images/tr/edit.png)
 
 ## Yapı
 

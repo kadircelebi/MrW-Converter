@@ -6,7 +6,7 @@
 
 <p align="center"><a href="https://converter.mrwproject.com/">Website</a> · <a href="README.tr.md">Türkçe</a></p>
 
-![The drag wheel over the app's window](docs/images/en/wheel.png)
+![The drag wheel over the app's window](.github/images/en/wheel.png)
 
 A Windows app that converts, shrinks and edits pictures, sound, video and PDFs. Everything runs on your own computer: no account, no ads, no usage data, and your files are never uploaded.
 
@@ -27,9 +27,9 @@ A Windows app that converts, shrinks and edits pictures, sound, video and PDFs. 
 - **Edit video and audio:** split, delete parts, trim the start and end. For video, also crop an area, remove the sound and save a frame.
 - **Crop and censor pictures:** cover what you mark with black, noise or mosaic.
 
-![The Shrink window](docs/images/en/shrink.png)
+![The Shrink window](.github/images/en/shrink.png)
 
-![The editing window](docs/images/en/edit.png)
+![The editing window](.github/images/en/edit.png)
 
 ## Layout
 

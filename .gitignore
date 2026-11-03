@@ -487,4 +487,3 @@ artifacts/
 dist/
 do_not_share/
 third_party/
-!docs/releases/

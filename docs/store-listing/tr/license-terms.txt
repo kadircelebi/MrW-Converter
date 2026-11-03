@@ -1,7 +1,0 @@
-MrW Converter, MrWProject tarafından ücretsiz sunulur.
-
-Bu uygulama, FFmpeg projesinin kütüphanelerini GNU Kısıtlı Genel Kamu Lisansı (LGPL) sürüm 2.1, LAME'i ise LGPL ile kullanır. Bunlar MrWProject'e ait değildir, kendi yazarlarına aittir. Bu koşullardaki veya Store koşullarındaki hiçbir şey, bu kütüphaneleri kendi kullanımınız için değiştirme ve bu değişiklikleri hata ayıklamak için tersine mühendislik dahil, o lisanslardan doğan haklarınızı sınırlamaz.
-
-Uygulamayla gelen derlemenin tam kaynak kodu ve aynı şekilde derlemek için gerekenler şu adrestedir: https://converter.mrwproject.com/tr/open-source/
-
-Tüm bileşenlerin lisansları uygulamanın Hakkında penceresinde listelenir.
