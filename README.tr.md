@@ -22,6 +22,7 @@ Görsel, ses, video ve PDF dosyalarını dönüştüren, küçülten ve düzenle
   - PDF'ten Word, PNG, JPG ve metne
   - Word, Excel, PowerPoint ve daha fazlasından PDF'e; bunun için gereken LibreOffice yalnızca onay verirseniz indirilir
 - **Küçült:** Videoyu ve fotoğrafı hedef boyuta indirin, birden çok dosyada da çalışır.
+- **Boyutlandır:** Görsellere yüzdeyle, en uzun kenarla ya da genişlik ve yükseklikle yeni piksel boyutu verin; küçültür de büyütür de.
 - **Arka planı kaldır:** Uygulamanın içinde çalışan bir yapay zekâ modeliyle saydam PNG.
 - **PDF araçları:** PDF'leri, görselleri ve Office dosyalarını tek PDF yapın, PDF'i sayfalarına ayırın.
 - **Video ve ses düzenleme:** Bölün, parça silin, baş ve sonu kesin. Videoda alan kırpma, sesi kaldırma ve kare alma da vardır.

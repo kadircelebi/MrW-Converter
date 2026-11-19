@@ -133,6 +133,18 @@ public static class Strings
     public static string ShrinkSideKeep => Get();
     public static string ShrinkHelp => Get();
     public static string ShrinkSave => Get();
+    public static string ToolResize => Get();
+    public static string ResizeNewSize => Get();
+    public static string ResizeByPercent => Get();
+    public static string ResizeByLongestSide => Get();
+    public static string ResizeByBox => Get();
+    public static string ResizeWidth => Get();
+    public static string ResizeHeight => Get();
+    public static string ResizeFit => Get();
+    public static string ResizeFill => Get();
+    public static string ResizeLarger => Get();
+    public static string ResizeHelp => Get();
+    public static string ResizeSave => Get();
 
     // Screen readers need the text without the access key marker.
     public static string TargetFormatName => TargetFormat.Replace("_", "");
@@ -148,6 +160,8 @@ public static class Strings
     public static string StatusPdfPassword(string fileName) => Format(fileName);
     public static string StatusPdfNoText(string fileName) => Format(fileName);
     public static string StatusShrinkTooSmall(string fileName) => Format(fileName);
+    public static string StatusResizeTooLarge(string fileName) => Format(fileName);
+    public static string ResizePreview(string fileName, string before, string after) => string.Format(CultureInfo.CurrentCulture, Get(), fileName, before, after);
     public static string ShrinkShareValue(int percent) => Format(percent);
     public static string StatusShrunk(string before, string after) => string.Format(CultureInfo.CurrentCulture, Get(), before, after);
 

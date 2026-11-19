@@ -102,6 +102,9 @@ public sealed partial class MainViewModel(FormatCatalog catalog, ConversionRunne
     /// <summary>Asks how small these files should get. Null means they cancelled.</summary>
     public Func<IReadOnlyList<FileEntry>, ShrinkOptions?>? AskShrink { get; set; }
 
+    /// <summary>Asks what pixel size these pictures should get. Null means they cancelled.</summary>
+    public Func<IReadOnlyList<FileEntry>, ResizeOptions?>? AskResize { get; set; }
+
     /// <summary>Asks whether LibreOffice may be downloaded. Nothing is fetched without a yes.</summary>
     public Func<bool>? AskOfficeDownload { get; set; }
 
@@ -296,6 +299,7 @@ public sealed partial class MainViewModel(FormatCatalog catalog, ConversionRunne
         ImageCropper.ToolId => EditAsync(Files[0], AskForCrop),
         ImageCensor.ToolId => EditAsync(Files[0], AskForCensor),
         ShrinkOptions.ToolId => ShrinkAsync(),
+        ResizeOptions.ToolId => ResizeAsync(),
         PdfTools.MergeId => MergePdfAsync(),
         PdfTools.SplitId => SplitPdfAsync(Files[0]),
         MediaEditor.EditId => EditMediaAsync(Files[0], AskForEdit),
@@ -350,6 +354,16 @@ public sealed partial class MainViewModel(FormatCatalog catalog, ConversionRunne
                 token),
             outputs => Strings.StatusShrunk(FileEntry.FormatSize(before), FileEntry.FormatSize(outputs.Sum(output => new FileInfo(output).Length))));
     }
+
+    private Task ResizeAsync() =>
+        AskResize?.Invoke(Files.ToArray()) is { } options
+            ? RunJobAsync((paths, folder, progress, token) => runner.RunToolAsync(
+                paths,
+                path => new ImageResizer(options, catalog.FormatOf(path)),
+                folder,
+                progress,
+                token))
+            : Task.CompletedTask;
 
     private async Task MergePdfAsync()
     {
@@ -411,6 +425,7 @@ public sealed partial class MainViewModel(FormatCatalog catalog, ConversionRunne
             PdfFileException { Problem: PdfProblem.Password } => Strings.StatusPdfPassword(name),
             PdfFileException { Problem: PdfProblem.NoText } => Strings.StatusPdfNoText(name),
             CannotShrinkException => Strings.StatusShrinkTooSmall(name),
+            ResizeTooLargeException => Strings.StatusResizeTooLarge(name),
             OfficeDownloadException => Strings.StatusOfficeDownloadFailed,
             _ => Strings.StatusFileFailed(name),
         };
@@ -568,6 +583,7 @@ public sealed partial class MainViewModel(FormatCatalog catalog, ConversionRunne
     private static ToolOption ToToolOption(string id) => id switch
     {
         ShrinkOptions.ToolId => new ToolOption(id, Strings.ToolShrink, ""),
+        ResizeOptions.ToolId => new ToolOption(id, Strings.ToolResize, ""),
         ImageCropper.ToolId => new ToolOption(id, Strings.ToolCrop, ""),
         ImageCensor.ToolId => new ToolOption(id, Strings.ToolCensor, ""),
         BackgroundRemover.ToolId => new ToolOption(id, Strings.ToolRemoveBackground, ""),

@@ -46,6 +46,7 @@ public partial class MainWindow : Window
         viewModel.AskSnapshot = AskSnapshot;
         viewModel.AskPdfMerge = AskPdfMerge;
         viewModel.AskShrink = AskShrink;
+        viewModel.AskResize = AskResize;
         viewModel.AskOfficeDownload = AskOfficeDownload;
         Loaded += async (_, _) => await ShowStartupStateAsync();
     }
@@ -77,6 +78,12 @@ public partial class MainWindow : Window
     private ShrinkOptions? AskShrink(IReadOnlyList<FileEntry> files)
     {
         var window = new ShrinkWindow(files) { Owner = this };
+        return window.ShowDialog() == true ? window.Options : null;
+    }
+
+    private ResizeOptions? AskResize(IReadOnlyList<FileEntry> files)
+    {
+        var window = new ResizeWindow(files, _catalog) { Owner = this };
         return window.ShowDialog() == true ? window.Options : null;
     }
 

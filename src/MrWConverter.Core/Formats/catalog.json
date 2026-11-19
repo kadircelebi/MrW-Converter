@@ -10,7 +10,7 @@
       "name": "image",
       "inputs": [ "jpg", "png", "webp", "tiff", "bmp", "avif" ],
       "outputs": [ "jpg", "png", "webp", "tiff", "bmp", "avif", "pdf" ],
-      "tools": [ "shrink", "removeBackground", "crop", "censor", "mergePdf" ]
+      "tools": [ "shrink", "resize", "removeBackground", "crop", "censor", "mergePdf" ]
     },
     {
       "name": "document",

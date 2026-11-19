@@ -22,6 +22,7 @@ A Windows app that converts, shrinks and edits pictures, sound, video and PDFs. 
   - PDF to Word, PNG, JPG and text
   - Word, Excel, PowerPoint and more to PDF, with LibreOffice, which the app downloads only if you agree
 - **Shrink:** bring videos and photos down to a target size, several files at once.
+- **Resize:** give pictures a new pixel size, by percent, longest side or width and height, smaller or larger.
 - **Remove background:** a transparent PNG from an AI model that runs inside the app.
 - **PDF tools:** combine PDFs, pictures and Office files into one PDF, or split a PDF into pages.
 - **Edit video and audio:** split, delete parts, trim the start and end. For video, also crop an area, remove the sound and save a frame.
