@@ -58,6 +58,17 @@ foreach ($scale in 100, 125, 150, 200, 400) {
     Save-Icon (Join-Path $assets "StoreLogo.scale-$scale.png") $store $store 1.0
 }
 
+# The Store's certification kit wants every image under 200 KB, and System.Drawing can't
+# compress harder. The few tiles over that are written again by Pillow, without losing a pixel.
+$limit = 204800
+$large = @(Get-ChildItem $assets -Filter *.png | Where-Object Length -gt $limit)
+if ($large) {
+    python -c "import sys`nfrom PIL import Image`nfor path in sys.argv[1:]:`n    image = Image.open(path)`n    image.load()`n    image.save(path, optimize=True)" @($large.FullName)
+    if ($LASTEXITCODE -ne 0) { throw 'Compressing the large tiles needs Python with Pillow (pip install pillow).' }
+    $still = @(Get-ChildItem $assets -Filter *.png | Where-Object Length -gt $limit)
+    if ($still) { throw "Still over $limit bytes: $($still.Name -join ', ')" }
+}
+
 # Partner Center asks for this one when the store listing is filled in.
 Save-Icon (Join-Path $root 'packaging\Logo\StoreListing-300.png') 300 300 1.0
 
